@@ -1,0 +1,5 @@
+2008.10.11
+
+* Added admin scripts and ChangeLog.
+* Added a setup.py, initial lib dir, and tests dir.
+* Added README and DEPENDENCIES.
