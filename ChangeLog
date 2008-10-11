@@ -4,3 +4,5 @@
 * Added a setup.py, initial lib dir, and tests dir.
 * Added README and DEPENDENCIES.
 * Added init.sh admin script.
+* Copied pymon shell grammar for use as a starter for OpenPIX, given the the
+pymon shell was inspired by PIX OS.

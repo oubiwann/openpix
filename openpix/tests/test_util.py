@@ -1,6 +1,6 @@
 from twisted.trial import unittest
 
-from txlb import util
+from openpix import util
 
 
 class UtilityTests(unittest.TestCase):

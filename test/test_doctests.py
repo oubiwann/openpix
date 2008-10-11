@@ -2,7 +2,7 @@ from utils import buildDoctestSuite
 
 # to add a new module to the test runner, simply include is in the list below:
 modules = [
-    'openpix',
+    'openpix.grammar',
 ]
 
 suite = buildDoctestSuite(modules)
