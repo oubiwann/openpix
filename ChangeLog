@@ -13,3 +13,9 @@ grammer module based on the adventureEngine code.
 * Renamed __init__ to meta and updated setup.
 * Updated the metadata.
 * Added ASCII art logos and banner text.
+* Moved parser into its own module.
+* Moved shell into its own module.
+* Created scripts subpackage for use in importing in bin scripts.
+* Created a bin dir and a test shell.
+* Added missing art module.
+

@@ -1,0 +1,7 @@
+#!/usr/bin/python
+
+import sys
+sys.path.insert(0, '/home/oubiwann/lab/OpenPIX/trunk')
+from openpix.scripts import shell
+
+shell.run()
