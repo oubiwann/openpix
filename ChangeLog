@@ -6,3 +6,10 @@
 * Added init.sh admin script.
 * Copied pymon shell grammar for use as a starter for OpenPIX, given the the
 pymon shell was inspired by PIX OS.
+* Added TODO.
+* Renamed grammar to pymonGrammar.
+* Added Paul McGuire's pyparsing adventureEngine (as a reference) and new
+grammer module based on the adventureEngine code.
+* Renamed __init__ to meta and updated setup.
+* Updated the metadata.
+* Added ASCII art logos and banner text.

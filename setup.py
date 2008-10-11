@@ -1,14 +1,14 @@
-import openpix
+from openpix import meta
 from openpix import util
 
 
 util.setup(
-    name=openpix.name,
-    version=openpix.version,
-    description=openpix.description,
+    name=meta.name,
+    version=meta.version,
+    description=meta.description,
     author="Duncan McGreggor, Anthony Baxter",
     author_email="oubiwann@divmod.com",
-    url=openpix.projectURL,
+    url=meta.projectURL,
     packages=util.find_packages(),
     #scripts=['bin/pfShell.tac'],
     long_description=util.catReST(

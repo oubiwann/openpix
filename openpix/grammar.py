@@ -1,261 +1,272 @@
-from pyparsing import Word, Combine, Suppress, CharsNotIn
-from pyparsing import Group, Optional, ZeroOrMore
-from pyparsing import nums, alphas, alphanums, oneOf
-from pyparsing import Literal, CaselessLiteral, Forward
+from pyparsing import *
+import random
 
-legalPathChars = Word(alphanums + "~/_-().?,;")
+def aOrAn( item ):
+    if item.desc[0] in "aeiou":
+        return "an"
+    else:
+        return "a"
 
-def getDateRange(orig, location, tokens):
-    key = tokens.keys()[0]
-    #date = zconfig.getDateRange(tokens[key])
-    #return [date]
-    return [key]
+def enumerateItems(l):
+    if len(l) == 0: return "nothing"
+    out = []
+    for item in l:
+        if len(l)>1 and item == l[-1]:
+            out.append("and")
+        out.append( aOrAn( item ) )
+        if item == l[-1]:
+            out.append(item.desc)
+        else:
+            if len(l)>2:
+                out.append(item.desc+",")
+            else:
+                out.append(item.desc)
+    return " ".join(out)
 
 
-def makeInt(orig, location, tokens):
-    key = tokens.keys()[0]
-    return int(tokens[key])
+class Command(object):
+    "Base class for commands"
+    def __init__(self, verb, verbProg):
+        self.verb = verb
+        self.verbProg = verbProg
+
+    @staticmethod
+    def helpDescription():
+        return ""
+
+    def _doCommand(self, player):
+        pass
+
+    def __call__(self, player ):
+        print self.verbProg.capitalize()+"..."
+        self._doCommand(player)
 
 
-class Grammar(object):
-    '''
-    # setup the ShellParser and set the services; in a real application,
-    # this will be done at a higher level (where configuration is in its
-    # proper place).
-    >>> g = Grammar().makeBNF()
+class MoveCommand(Command):
+    def __init__(self, quals):
+        super(MoveCommand,self).__init__("MOVE", "moving")
+        self.direction = quals["direction"][0]
 
-    # test help token
-    >>> tokens = g.parseString("help")
-    >>> tokens.commandtype
-    'help'
+    @staticmethod
+    def helpDescription():
+        return """MOVE or GO - go NORTH, SOUTH, EAST, or WEST
+          (can abbreviate as 'GO N' and 'GO W', or even just 'E' and 'S')"""
 
-    # test some show tokens
-    >>> tokens = g.parseString("show nodes")
-    >>> tokens.action
-    'nodes'
-    >>> tokens = g.parseString("show services")
-    >>> tokens.action
-    'services'
-    >>> tokens = g.parseString("show lists")
-    >>> tokens.action
-    'lists'
+    def _doCommand(self, player):
+        rm = player.room
+        nextRoom = rm.doors[
+            {
+            "N":0,
+            "S":1,
+            "E":2,
+            "W":3,
+            }[self.direction]
+            ]
+        if nextRoom:
+            player.moveTo( nextRoom )
+        else:
+            print "Can't go that way."
 
-    # test a basic node token
-    >>> tokens = g.parseString("node add www1_anon_user www.adytum.us")
-    >>> tokens.commandtype
-    'node'
-    >>> tokens.name
-    'www1_anon_user'
-    >>> tokens.action
-    'add'
-    >>> tokens.uri
-    'www.adytum.us'
 
-    # test with more complicated uri
-    >>> tokens = g.parseString("node add www1_auth_user pymonuser:asecret@www.adytum.us")
-    >>> tokens.name
-    'www1_auth_user'
-    >>> tokens.uri
-    'pymonuser:asecret@www.adytum.us'
+class QuitCommand(Command):
+    def __init__(self, quals):
+        super(QuitCommand,self).__init__("QUIT", "quitting")
 
-    # let's show a particular node
-    >>> tokens = g.parseString("node show www1_auth_user")
-    >>> tokens.action
-    'show'
-    >>> tokens.name
-    'www1_auth_user'
+    @staticmethod
+    def helpDescription():
+        return "QUIT or Q - ends the game"
 
-    # test a node token with lots in it
-    >>> tokens = g.parseString("service http-status add www1_anon_user path /test/index.html")
-    >>> tokens.commandtype
-    'service'
-    >>> tokens.servicetype
-    'http-status'
-    >>> tokens.action
-    'add'
-    >>> tokens.name
-    'www1_anon_user'
-    >>> tokens.path
-    '/test/index.html'
+    def _doCommand(self, player):
+        print "Ok...."
+        player.gameOver = True
 
-    >>> tokens = g.parseString("service ping add www1_auth_user enabled True org Adytum interval 20 binary /here/ping count 10 ok-threshold dummyokthresh warn-threshold dummywarnthresh error-threshold dummyerrorthresh failed-threshold dummyfailedthresh scheduled-downtime 2005.12.01 03:00:00 - 2005.12.01 04:00:00")
-    >>> tokens.commandtype
-    'service'
-    >>> tokens.servicetype
-    'ping'
-    >>> tokens.action
-    'add'
-    >>> tokens.enabled
-    'true'
-    >>> tokens.org
-    'Adytum'
-    >>> tokens.interval
-    20
-    >>> tokens.binary
-    '/here/ping'
-    >>> tokens.count
-    10
 
-    >>> tokens.ok_threshold
-    'dummyokthresh'
-    >>> tokens.warn_threshold
-    'dummywarnthresh'
-    >>> tokens.error_threshold
-    'dummyerrorthresh'
-    >>> tokens.failed_threshold
-    'dummyfailedthresh'
-    >>> down = tokens.scheduled_downtime
+class HelpCommand(Command):
+    def __init__(self, quals):
+        super(HelpCommand,self).__init__("HELP", "helping")
 
-    '''
-    parser = None
+    @staticmethod
+    def helpDescription():
+        return "HELP or H or ? - displays this help message"
 
+    def _doCommand(self, player):
+        print "Enter any of the following commands (not case sensitive):"
+        for cmd in [
+            MoveCommand,
+            QuitCommand,
+            HelpCommand,
+            ]:
+            print "  - %s" % cmd.helpDescription()
+        print
+
+class AppParseException(ParseException):
+    pass
+
+class Parser(object):
     def __init__(self):
-        self.bnf = None
+        self.bnf = self.makeBNF()
+
+    def makeCommandParseAction( self, cls ):
+        def cmdParseAction(s,l,tokens):
+            return cls(tokens)
+        return cmdParseAction
 
     def makeBNF(self):
-        # initial commands
-        nodeToken = Literal("node").setResultsName(
-            "commandtype")
-        showToken = Literal("show").setResultsName(
-            "commandtype")
-        serviceToken = Literal("service").setResultsName(
-            "commandtype")
-        listToken = Literal("list").setResultsName(
-            "commandtype")
-        memToken = Literal("mem").setResultsName(
-            "commandtype")
-        helpToken = Literal("help").setResultsName(
-            "commandtype")
+        moveVerb = oneOf("MOVE GO", caseless=True) | empty
+        quitVerb = oneOf("QUIT Q", caseless=True)
+        helpVerb = oneOf("H HELP ?",caseless=True)
 
-        # XXX in the future, service types will be taken from the
-        # configuration file... but not directly. Need to provide an
-        # attribute so that higher up in the "chain" (at the factory
-        # level?) the configuration data that the grammar needs can
-        # be set. We'll look at protocol/factory attributes for
-        # twisted factories and clients, respectively.
-        #svcs = ' '.join(self.parser.services)
-        svcs = 'testing ping http-status'
-        serviceTypesToken = Optional(
-            oneOf(
-            svcs).setResultsName(
-            "servicetype"))
+        itemRef = OneOrMore(Word(alphas)).setParseAction( self.validateItemName )
+        nDir = oneOf("N NORTH",caseless=True).setParseAction(replaceWith("N"))
+        sDir = oneOf("S SOUTH",caseless=True).setParseAction(replaceWith("S"))
+        eDir = oneOf("E EAST",caseless=True).setParseAction(replaceWith("E"))
+        wDir = oneOf("W WEST",caseless=True).setParseAction(replaceWith("W"))
+        moveDirection = nDir | sDir | eDir | wDir
 
-        # commands
-        serviceNodeActionsToken = oneOf(
-            "add del delete update replace append").setResultsName(
-            "action")
-        serviceNodeShowActionToken = Literal(
-            "show").setResultsName(
-            "action")
-        memActionsToken = oneOf(
-            "write clear").setResultsName(
-            "action")
-        showActionsToken = oneOf(
-            "nodes services lists").setResultsName(
-            "action")
+        moveCommand = moveVerb + moveDirection.setResultsName("direction")
+        quitCommand = quitVerb
+        helpCommand = helpVerb
 
-        # node args
-        nodeNameToken = Word(alphanums + '_').setResultsName(
-            "name")
-        nodeUriToken = Word(alphanums + '/:@_-.').setResultsName(
-            "uri")
+        moveCommand.setParseAction(
+            self.makeCommandParseAction( MoveCommand ) )
+        quitCommand.setParseAction(
+            self.makeCommandParseAction( QuitCommand ) )
+        helpCommand.setParseAction(
+            self.makeCommandParseAction( HelpCommand ) )
 
-        # general service args
-        true = CaselessLiteral("true")
-        false = CaselessLiteral("false")
-        enabledToken = Optional(
-            Literal("enabled") +
-            (true | false).setResultsName(
-            "enabled"))
-        orgToken = Optional(
-            Literal("org") +
-            Word(alphanums + """.'",:;!?()@#$%&*<>/\\""").setResultsName(
-            "org"))
-        intervalToken = Optional(
-            Literal("interval") +
-            Word(nums).setParseAction(makeInt).setResultsName(
-            "interval"))
+        return (
+                  moveCommand |
+                  helpCommand |
+                  quitCommand ).setResultsName("command") + LineEnd()
 
-        okThreshToken = Optional(
-            Literal("ok-threshold") +
-            Word(alphanums).setResultsName(
-            "ok_threshold"))
-        warnThreshToken = Optional(
-            Literal("warn-threshold") +
-            Word(alphanums).setResultsName(
-            "warn_threshold"))
-        errorThreshToken = Optional(
-            Literal("error-threshold") +
-            Word(alphanums).setResultsName(
-            "error_threshold"))
-        failedThreshToken = Optional(
-            Literal("failed-threshold") +
-            Word(alphanums).setResultsName(
-            "failed_threshold"))
-        thresholdsToken = okThreshToken + warnThreshToken + \
-            errorThreshToken + failedThreshToken
+    def parseCmd(self, cmdstr):
+        try:
+            ret = self.bnf.parseString(cmdstr)
+            return ret
+        except AppParseException, pe:
+            print pe.msg
+        except ParseException, pe:
+            print random.choice([ "Sorry, I don't understand that.",
+                                   "Huh?",
+                                   "Excuse me?",
+                                   "???",
+                                   "What?" ] )
 
-        downtimeToken = Optional(
-            Literal("scheduled-downtime") +
-            Word(
-                nums + "." + " " + nums + ":" + " - " +
-                nums + "." + " " + nums + ":"
-            ).setParseAction(getDateRange).setResultsName(
-            "scheduled_downtime"))
+class Player(object):
+    def __init__(self, name):
+        self.name = name
+        self.gameOver = False
+        self.inv = []
 
-        # ping-specific args
-        pingBinaryToken = Optional(
-            Literal("binary") +
-            legalPathChars.setResultsName(
-            "binary"))
-        pingCountToken = Optional(
-            Literal("count") +
-            Word(nums).setParseAction(makeInt).setResultsName(
-            "count"))
+    def moveTo(self, rm):
+        self.room = rm
+        rm.enter(self)
+        if self.gameOver:
+            if rm.desc:
+                rm.describe()
+            print "Game over!"
+        else:
+            rm.describe()
 
-        pingArgs = Optional(pingBinaryToken + pingCountToken)
+def createRooms( rm ):
+    """
+    create rooms, using multiline string showing map layout
+    string contains symbols for the following:
+     A-Z, a-z indicate rooms, and rooms will be stored in a dictionary by
+               reference letter
+     -, | symbols indicate connection between rooms
+     <, >, ^, . symbols indicate one-way connection between rooms
+    """
+    # start with empty dictionary of rooms
+    ret = {}
 
-        # http-specifc args
-        pathToken = Optional(
-            Literal("path") +
-            Word(alphanums + "/-_+?#.,~@").setResultsName(
-            "path"))
+    # look for room symbols, and initialize dictionary
+    # - exit room is always marked 'Z'
+    for c in rm:
+        if "A" <= c <= "Z" or "a" <= c <= "z":
+            if c != "Z":
+                ret[c] = Room(c)
+            else:
+                ret[c] = Exit()
 
-        # assembled node grammar
-        fullNodeNoShow = serviceNodeActionsToken + \
-            nodeNameToken + nodeUriToken + enabledToken + orgToken + \
-            intervalToken + downtimeToken
-        fullNodeShow = serviceNodeShowActionToken + nodeNameToken
-        fullNodeToken = nodeToken + (fullNodeNoShow | fullNodeShow)
+    # scan through input string looking for connections between rooms
+    rows = rm.split("\n")
+    for row,line in enumerate(rows):
+        for col,c in enumerate(line):
+            if "A" <= c <= "Z" or "a" <= c <= "z":
+                room = ret[c]
+                n = None
+                s = None
+                e = None
+                w = None
 
-        # assembled show grammar
-        fullShowToken = showToken + showActionsToken
+                # look in neighboring cells for connection symbols (must take
+                # care to guard that neighboring cells exist before testing
+                # contents)
+                if col > 0 and line[col-1] in "<-":
+                    other = line[col-2]
+                    w = ret[other]
+                if col < len(line)-1 and line[col+1] in "->":
+                    other = line[col+2]
+                    e = ret[other]
+                if row > 1 and col < len(rows[row-1]) and rows[row-1][col] in '|^':
+                    other = rows[row-2][col]
+                    n = ret[other]
+                if row < len(rows)-1 and col < len(rows[row+1]) and rows[row+1][col] in '|.':
+                    other = rows[row+2][col]
+                    s = ret[other]
 
-        # assembled service grammar
-        fullServiceToken = serviceToken + serviceTypesToken + \
-            serviceNodeActionsToken + nodeNameToken + pathToken + \
-            enabledToken + orgToken + intervalToken + pingArgs + \
-            thresholdsToken + downtimeToken
+                # set connections to neighboring rooms
+                room.doors=[n,s,e,w]
 
-        # assembled notification-list grammar
-        fullListToken = listToken
+    return ret
 
-        # assembled mem grammar
-        fullMemToken = memToken + memActionsToken
+def playGame(p,startRoom):
+    # create parser
+    parser = Parser()
+    p.moveTo( startRoom )
+    while not p.gameOver:
+        cmdstr = raw_input(">> ")
+        cmd = parser.parseCmd(cmdstr)
+        if cmd is not None:
+            cmd.command( p )
+    print
+    print "You ended the game with:"
+    for i in p.inv:
+        print " -", aOrAn(i), i
 
-        # assembled help grammar
-        fullHelpToken = helpToken
 
-        # complete grammar
-        command = (fullNodeToken | fullShowToken | fullServiceToken |
-            fullListToken | fullMemToken | fullHelpToken)
+#====================
+# start game definition
+roomMap = """
+     d-Z
+     |
+   f-c-e
+   . |
+   q<b
+     |
+     A
+"""
+rooms = createRooms( roomMap )
+rooms["A"].desc = "You are standing at the front door."
+rooms["b"].desc = "You are in a garden."
+rooms["c"].desc = "You are in a kitchen."
+rooms["d"].desc = "You are on the back porch."
+rooms["e"].desc = "You are in a library."
+rooms["f"].desc = "You are on the patio."
+rooms["q"].desc = "You are sinking in quicksand.  You're dead..."
+rooms["q"].gameOver = True
 
-        self.bnf = command
-        return command
+# define global variables for referencing rooms
+frontPorch = rooms["A"]
+garden     = rooms["b"]
+kitchen    = rooms["c"]
+backPorch  = rooms["d"]
+library    = rooms["e"]
+patio      = rooms["f"]
 
-def _test():
-    import doctest, grammar
-    doctest.testmod(grammar)
+# create player
+plyr = Player("Bob")
 
-if __name__ == '__main__':
-    _test()
+# start game
+playGame( plyr, frontPorch )
