@@ -18,4 +18,9 @@ grammer module based on the adventureEngine code.
 * Created scripts subpackage for use in importing in bin scripts.
 * Created a bin dir and a test shell.
 * Added missing art module.
+* Updated login banner rendering.
+* Renamed shell class and function to be more in accord with how it will be
+used.
+* Renamed grammar module to command.
+* Renamed parser module to grammar.
 

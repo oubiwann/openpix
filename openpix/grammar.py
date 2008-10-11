@@ -1,108 +1,54 @@
-import random
+from pyparsing import ParseException, oneOf, replaceWith, LineEnd, empty
 
-from pyparsing import *
-
-
-def aOrAn( item ):
-    if item.desc[0] in "aeiou":
-        return "an"
-    else:
-        return "a"
-
-def enumerateItems(l):
-    if len(l) == 0: return "nothing"
-    out = []
-    for item in l:
-        if len(l)>1 and item == l[-1]:
-            out.append("and")
-        out.append( aOrAn( item ) )
-        if item == l[-1]:
-            out.append(item.desc)
-        else:
-            if len(l)>2:
-                out.append(item.desc+",")
-            else:
-                out.append(item.desc)
-    return " ".join(out)
+from openpix import command
 
 
-class Command(object):
-    "Base class for commands"
-    def __init__(self, verb, verbProg):
-        self.verb = verb
-        self.verbProg = verbProg
-
-    @staticmethod
-    def helpDescription():
-        return ""
-
-    def _doCommand(self, player):
-        pass
-
-    def __call__(self, player ):
-        print self.verbProg.capitalize()+"..."
-        self._doCommand(player)
+class AppParseException(ParseException):
+    pass
 
 
-class MoveCommand(Command):
-    def __init__(self, quals):
-        super(MoveCommand,self).__init__("MOVE", "moving")
-        self.direction = quals["direction"][0]
+class Parser(object):
+    def __init__(self):
+        self.bnf = self.makeBNF()
 
-    @staticmethod
-    def helpDescription():
-        return """MOVE or GO - go NORTH, SOUTH, EAST, or WEST
-          (can abbreviate as 'GO N' and 'GO W', or even just 'E' and 'S')"""
+    def makeCommandParseAction( self, cls ):
+        def cmdParseAction(s,l,tokens):
+            return cls(tokens)
+        return cmdParseAction
 
-    def _doCommand(self, player):
-        rm = player.room
-        nextRoom = rm.doors[
-            {
-            "N":0,
-            "S":1,
-            "E":2,
-            "W":3,
-            }[self.direction]
-            ]
-        if nextRoom:
-            player.moveTo( nextRoom )
-        else:
-            print "Can't go that way."
+    def makeBNF(self):
+        moveVerb = oneOf("MOVE GO", caseless=True) | empty
+        quitVerb = oneOf("QUIT Q", caseless=True)
+        helpVerb = oneOf("H HELP ?",caseless=True)
 
+        nDir = oneOf("N NORTH",caseless=True).setParseAction(replaceWith("N"))
+        sDir = oneOf("S SOUTH",caseless=True).setParseAction(replaceWith("S"))
+        eDir = oneOf("E EAST",caseless=True).setParseAction(replaceWith("E"))
+        wDir = oneOf("W WEST",caseless=True).setParseAction(replaceWith("W"))
+        moveDirection = nDir | sDir | eDir | wDir
 
-class QuitCommand(Command):
-    def __init__(self, quals):
-        super(QuitCommand,self).__init__("QUIT", "quitting")
+        moveCommand = moveVerb + moveDirection.setResultsName("direction")
+        quitCommand = quitVerb
+        helpCommand = helpVerb
 
-    @staticmethod
-    def helpDescription():
-        return "QUIT or Q - ends the game"
+        moveCommand.setParseAction(
+            self.makeCommandParseAction( command.MoveCommand ) )
+        quitCommand.setParseAction(
+            self.makeCommandParseAction( command.QuitCommand ) )
+        helpCommand.setParseAction(
+            self.makeCommandParseAction( command.HelpCommand ) )
 
-    def _doCommand(self, player):
-        print "Ok...."
-        player.gameOver = True
+        return (
+                  moveCommand |
+                  helpCommand |
+                  quitCommand ).setResultsName("command") + LineEnd()
 
-
-class HelpCommand(Command):
-    def __init__(self, quals):
-        super(HelpCommand,self).__init__("HELP", "helping")
-
-    @staticmethod
-    def helpDescription():
-        return "HELP or H or ? - displays this help message"
-
-    def _doCommand(self, player):
-        print "Enter any of the following commands (not case sensitive):"
-        for cmd in [
-            MoveCommand,
-            QuitCommand,
-            HelpCommand,
-            ]:
-            print "  - %s" % cmd.helpDescription()
-        print
-
-
-
-
-
+    def parseCmd(self, cmdstr):
+        try:
+            ret = self.bnf.parseString(cmdstr)
+            return ret
+        except AppParseException, pe:
+            print pe.msg
+        except ParseException, pe:
+            print "ERROR: Invalid input detected."
 

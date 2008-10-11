@@ -5,8 +5,11 @@ from openpix.parser import Parser
 
 starterHelp = "Type help or '?' for a list of available commands."
 
+dividerSegment = "_" * 34
+bannerDivider = "\n %s .:|:. %s\n" % (dividerSegment, dividerSegment)
 
-class Player(object):
+
+class User(object):
     def __init__(self, name):
         self.name = name
         self.gameOver = False
@@ -23,10 +26,12 @@ class Player(object):
             rm.describe()
 
 
-def playGame(p):
+def setUpShell(p):
     # create parser
     parser = Parser()
+    print bannerDivider
     print "\n%s" % meta.licenseNotice
+    print bannerDivider
     print art.splashLogo
     print art.splashText
     print "\n%s" % starterHelp
@@ -36,11 +41,3 @@ def playGame(p):
         if cmd is not None:
             cmd.command( p )
 
-
-#====================
-# start game definition
-# create player
-plyr = Player("Bob")
-
-# start game
-playGame(plyr)

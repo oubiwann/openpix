@@ -1,6 +1,6 @@
-from openpix.shell import playGame, Player
+from openpix.shell import setUpShell, User
 
-user = Player("Bob")
+user = User("Bob")
 
 def run():
-    playGame(user)
+    setUpShell(user)
