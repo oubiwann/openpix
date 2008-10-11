@@ -1,6 +1,6 @@
 from openpix import art
 from openpix import meta
-from openpix.parser import Parser
+from openpix.grammar import Parser
 
 
 starterHelp = "Type help or '?' for a list of available commands."

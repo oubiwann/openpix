@@ -23,4 +23,4 @@ grammer module based on the adventureEngine code.
 used.
 * Renamed grammar module to command.
 * Renamed parser module to grammar.
-
+* Fixed bad import in shell.
