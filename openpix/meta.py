@@ -3,7 +3,7 @@ shortName = "OpenPIX"
 summary = "Security Appliance Shell"
 description = "A PIX-like CLI for Open Source Firewalls"
 version = "0.0.1"
-longVersion = "%s %s, Version %s" % (name, description, version)
+longVersion = "%s: %s, Version %s" % (name, description, version)
 projectURL = "https://launchpad.net/openpix"
 
 copyright = """

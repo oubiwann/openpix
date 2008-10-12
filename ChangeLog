@@ -19,6 +19,8 @@ PIX CLI.
 * Created a commands subpackage and moved command.py to commands/usermode.py.
 * Deleted some unused functions.
 * Moved commands.usermode.BaseCommand to commands.base.
+* Added missing base file.
+* Tweaked the version string.
 
 2008.10.11
 
