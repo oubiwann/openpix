@@ -30,3 +30,4 @@ used.
 * Properly formatted help output.
 * Added stubs for the remainder of the top-level unprivileged commands.
 * Differentiated between "help" and "?" like PIX OS does.
+* Filled out the grammar for the stubbed commands.

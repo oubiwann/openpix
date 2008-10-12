@@ -134,48 +134,49 @@ class ShortHelpCommand(BaseHelpCommand):
             print "  %-10s     %s" % (obj.getCommandName(), obj.getSummary())
         print
 
+
 class HelpCommand(BaseCommand):
     """
-    Interactive help for commands (not implemented)
+    Interactive help for commands
     """
-    summary = "Interactive help for commands (not implemented)"
+    summary = "Interactive help for commands"
     usage = "%s [command]"
     skipHelp = False
     helpTextMethod = "getDesc"
 
     def _doCommand(self, player):
-        pass
+        print "not implemented"
 
 
 class EnableCommand(BaseCommand):
     """
-    Turn on privileged commands (not implemented)
+    Turn on privileged commands
     """
-    summary = "Turn on privileged commands (not implemented)"
+    summary = "Turn on privileged commands"
     usage = "%s [<priv_level>]"
     skipHelp = False
 
     def _doCommand(self, player):
-        pass
+        print "not implemented"
 
 
 class LoginCommand(BaseCommand):
     """
-    Log in as a particular user (not implemented)
+    Log in as a particular user
     """
-    summary = "Log in as a particular user (not implemented)"
+    summary = "Log in as a particular user"
     usage = "%s"
     skipHelp = False
 
     def _doCommand(self, player):
-        pass
+        print "not implemented"
 
 
 class PingCommand(BaseCommand):
     """
-    Test connectivity from specified interface to an IP address (not implemented)
+    Test connectivity from specified interface to an IP address
     """
-    summary = "Send echo messages (not implemented)"
+    summary = "Send echo messages"
     usage = """
         %s [if_name] <host> [data <pattern>] [repeat <count>] [size <bytes>]
                     [timeout <seconds>] [validate]
@@ -201,26 +202,26 @@ class PingCommand(BaseCommand):
     skipHelp = False
 
     def _doCommand(self, player):
-        pass
+        print "not implemented"
 
 
 class ShowCommand(BaseCommand):
     """
-    Display specific information to the console (not implemented)
+    Display specific information to the console
     """
-    summary = "Show running system information (not implemented)"
+    summary = "Show running system information"
     usage = "%s [command [subcommand]]"
     skipHelp = False
 
     def _doCommand(self, player):
-        pass
+        print "not implemented"
 
 
 class TracerouteCommand(BaseCommand):
     """
-    Print the route packets take to a network host (not implemented)
+    Print the route packets take to a network host
     """
-    summary = "Trace route to destination (not implemented)"
+    summary = "Trace route to destination"
     usage = """
         %s <destination> [source <src_address|src_intf>]
                     [numeric] [timeout <time>] [ttl <min-ttl> <max-ttl>]
@@ -239,5 +240,6 @@ class TracerouteCommand(BaseCommand):
     skipHelp = False
 
     def _doCommand(self, player):
-        pass
+        print "not implemented"
+
 
