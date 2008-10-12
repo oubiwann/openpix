@@ -45,5 +45,11 @@ def setUpShell(user):
         cmdstr = raw_input(defaultPrompt)
         cmd = parser.parseCommand(cmdstr)
         if cmd is not None:
-            cmd.command(user)
+            # XXX
+            # not sure if this switching logic should happen here or in the
+            # command classes during __init__ and __call__
+            if cmd.command.tokens.shortHelp:
+                cmd.command.printShortHelp()
+            else:
+                cmd.command(user)
 

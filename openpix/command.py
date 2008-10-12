@@ -32,6 +32,9 @@ class BaseCommand(object):
     usage = ""
     syntax = ""
 
+    def __init__(self, tokens):
+        self.tokens = tokens
+
     def __call__(self, user):
         self._doCommand(user)
 
@@ -59,7 +62,13 @@ class BaseCommand(object):
         """
 
         """
-        return self.usage % self.getCommandName
+        return self.usage.strip() % self.getCommandName()
+
+    def printShortHelp(self):
+        """
+
+        """
+        print "\n  %s\n\n  %s\n" % (self.getSummary(), self.getUsage())
 
     def getSyntax(self):
         """

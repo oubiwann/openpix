@@ -1,0 +1,11 @@
+Startup
+-------
+ * read all config files
+ * read "flash" pickle
+ * collect system information
+ * label it all as "reading the flash"
+
+Flash Drive
+-----------
+ * a pickle
+ * stores all non-system informtion when "write mem" is called

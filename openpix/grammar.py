@@ -1,5 +1,5 @@
 from pyparsing import (
-    ParseException, oneOf, replaceWith, LineEnd, empty, Literal)
+    ParseException, oneOf, replaceWith, LineEnd, empty, Literal, Optional)
 
 from openpix import command
 
@@ -14,10 +14,13 @@ class Parser(object):
 
     def makeCommandParseAction(self, cls):
         def cmdParseAction(s,l,tokens):
-            return cls()
+            return cls(tokens)
         return cmdParseAction
 
     def makeBNF(self):
+        shortHelp = Literal("?")
+
+        enableVerb = oneOf("enable enab en", caseless=True)
         quitVerb = oneOf("quit q exit ex logout logou logo", caseless=True)
         helpVerb = oneOf("help h", caseless=True)
         pingVerb = oneOf("ping pi", caseless=True)
@@ -25,17 +28,17 @@ class Parser(object):
         showVerb = oneOf("show sho sh", caseless=True)
         tracerouteVerb = oneOf("traceroute tracert trace trac tra tr",
                                caseless=True)
-        shortHelpVerb = Literal("?")
-        enableVerb = oneOf("enable enab en", caseless=True)
+        shortHelpVerb = shortHelp
+        shortHelpOption = Optional(shortHelp).setResultsName('shortHelp')
 
-        quitCommand = quitVerb
-        helpCommand = helpVerb
-        pingCommand = pingVerb
-        loginCommand = loginVerb
-        showCommand = showVerb
-        tracerouteCommand = tracerouteVerb
-        enableCommand = enableVerb
-        shortHelpCommand = shortHelpVerb
+        quitCommand = quitVerb + shortHelpOption
+        helpCommand = helpVerb + shortHelpOption
+        pingCommand = pingVerb + shortHelpOption
+        loginCommand = loginVerb + shortHelpOption
+        showCommand = showVerb + shortHelpOption
+        tracerouteCommand = tracerouteVerb + shortHelpOption
+        enableCommand = enableVerb + shortHelpOption
+        shortHelpCommand = shortHelpVerb + shortHelpOption
 
         quitCommand.setParseAction(
             self.makeCommandParseAction(command.QuitCommand))

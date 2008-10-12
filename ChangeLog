@@ -1,3 +1,9 @@
+2008.10.12
+
+* Updated TODO.
+* Added support for <command name> ? for short help/usage.
+* Added additional command checking in while loop of shell.
+
 2008.10.11
 
 * Added admin scripts and ChangeLog.
