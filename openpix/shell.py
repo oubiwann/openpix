@@ -1,3 +1,6 @@
+import socket
+import readline
+
 from openpix import art
 from openpix import meta
 from openpix.grammar import Parser
@@ -8,6 +11,8 @@ starterHelp = "Type help or '?' for a list of available commands."
 dividerSegment = "_" * 34
 bannerDivider = "\n %s .:|:. %s\n" % (dividerSegment, dividerSegment)
 
+defaultPrompt = "openpix@%s> " % socket.gethostname()
+rootPrompt = "openpix@%s# " % socket.gethostname()
 
 class User(object):
     def __init__(self, name):
@@ -26,18 +31,19 @@ class User(object):
             rm.describe()
 
 
-def setUpShell(p):
+def setUpShell(user):
     # create parser
     parser = Parser()
     print bannerDivider
-    print "\n%s" % meta.licenseNotice
-    print bannerDivider
     print art.splashLogo
     print art.splashText
+    print bannerDivider
+    print "\n%s" % meta.licenseNotice
+    print bannerDivider
     print "\n%s" % starterHelp
-    while not p.gameOver:
-        cmdstr = raw_input(">> ")
-        cmd = parser.parseCmd(cmdstr)
+    while not user.gameOver:
+        cmdstr = raw_input(defaultPrompt)
+        cmd = parser.parseCommand(cmdstr)
         if cmd is not None:
-            cmd.command( p )
+            cmd.command(user)
 

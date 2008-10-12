@@ -1,4 +1,5 @@
-from pyparsing import ParseException, oneOf, replaceWith, LineEnd, empty
+from pyparsing import (
+    ParseException, oneOf, replaceWith, LineEnd, empty, Literal)
 
 from openpix import command
 
@@ -11,44 +12,43 @@ class Parser(object):
     def __init__(self):
         self.bnf = self.makeBNF()
 
-    def makeCommandParseAction( self, cls ):
+    def makeCommandParseAction(self, cls):
         def cmdParseAction(s,l,tokens):
-            return cls(tokens)
+            return cls()
         return cmdParseAction
 
     def makeBNF(self):
-        moveVerb = oneOf("MOVE GO", caseless=True) | empty
-        quitVerb = oneOf("QUIT Q", caseless=True)
-        helpVerb = oneOf("H HELP ?",caseless=True)
+        quitVerb = oneOf("quit q exit ex logout", caseless=True)
+        helpVerb = oneOf("help h", caseless=True)
+        shortHelpVerb = Literal("?")
+        enableVerb = oneOf("enable en", caseless=True)
 
-        nDir = oneOf("N NORTH",caseless=True).setParseAction(replaceWith("N"))
-        sDir = oneOf("S SOUTH",caseless=True).setParseAction(replaceWith("S"))
-        eDir = oneOf("E EAST",caseless=True).setParseAction(replaceWith("E"))
-        wDir = oneOf("W WEST",caseless=True).setParseAction(replaceWith("W"))
-        moveDirection = nDir | sDir | eDir | wDir
-
-        moveCommand = moveVerb + moveDirection.setResultsName("direction")
         quitCommand = quitVerb
         helpCommand = helpVerb
+        enableCommand = enableVerb
+        shortHelpCommand = shortHelpVerb
 
-        moveCommand.setParseAction(
-            self.makeCommandParseAction( command.MoveCommand ) )
         quitCommand.setParseAction(
-            self.makeCommandParseAction( command.QuitCommand ) )
+            self.makeCommandParseAction(command.QuitCommand))
         helpCommand.setParseAction(
-            self.makeCommandParseAction( command.HelpCommand ) )
+            self.makeCommandParseAction(command.HelpCommand))
+        shortHelpCommand.setParseAction(
+            self.makeCommandParseAction(command.ShortHelpCommand))
+        enableCommand.setParseAction(
+            self.makeCommandParseAction(command.EnableCommand))
 
         return (
-                  moveCommand |
-                  helpCommand |
-                  quitCommand ).setResultsName("command") + LineEnd()
+            enableCommand | shortHelpCommand | helpCommand | quitCommand
+            ).setResultsName("command") + LineEnd()
 
-    def parseCmd(self, cmdstr):
+    def parseCommand(self, command):
         try:
-            ret = self.bnf.parseString(cmdstr)
+            ret = self.bnf.parseString(command)
             return ret
-        except AppParseException, pe:
-            print pe.msg
-        except ParseException, pe:
+        except AppParseException, e:
+            print e.msg
+        except ParseException, e:
+            # XXX
+            print e
             print "ERROR: Invalid input detected."
 

@@ -24,3 +24,9 @@ used.
 * Renamed grammar module to command.
 * Renamed parser module to grammar.
 * Fixed bad import in shell.
+* Rearranged the placement of the splash images an the license.
+* Cleaned up command classes and removed unneeded classes.
+* Changed the help command.
+* Properly formatted help output.
+* Added stubs for the remainder of the top-level unprivileged commands.
+* Differentiated between "help" and "?" like PIX OS does.

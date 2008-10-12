@@ -1,3 +1,5 @@
+import inspect
+
 def aOrAn( item ):
     if item.desc[0] in "aeiou":
         return "an"
@@ -21,83 +23,221 @@ def enumerateItems(l):
     return " ".join(out)
 
 
-class Command(object):
-    "Base class for commands"
-    def __init__(self, verb, verbProg):
-        self.verb = verb
-        self.verbProg = verbProg
+class BaseCommand(object):
+    """
+    Base class for commands.
+    """
+    skipHelp = True
+    summary = ""
+    usage = ""
+    syntax = ""
 
-    @staticmethod
-    def helpDescription():
-        return ""
+    def __call__(self, user):
+        self._doCommand(user)
+
+    def _doCommand(self, user):
+        """
+        This method provides the action for each command.
+
+        This needs to be overridden by subclasses.
+        """
+        raise NotImplementedError
+
+    def getCommandName(self):
+        """
+
+        """
+        return self.__class__.__name__.replace('Command', '').lower()
+
+    def getDesc(self):
+        """
+
+        """
+        return self.__doc__.strip()
+
+    def getUsage(self):
+        """
+
+        """
+        return self.usage % self.getCommandName
+
+    def getSyntax(self):
+        """
+
+        """
+        return self.syntax
+
+    def getSummary(self):
+        """
+
+        """
+        return self.summary
+
+    def getHelp(self):
+        """
+
+        """
+        syntax = self.getSyntax()
+        if syntax:
+            syntax = "SYNTAX:\n%s" % syntax
+        return "\nUSAGE:\n%s\nDESCRIPTION:\n%s\n" % (
+            self.getUsage(), self.getDesc(), syntax)
+
+
+class QuitCommand(BaseCommand):
+    """
+    Disable privileged commands, end configuration mode, or logout
+    """
+    summary = "Exit from the EXEC"
+    usage = "%s"
+    skipHelp = False
+
+    def _doCommand(self, player):
+        print "\nLogoff\n"
+        player.gameOver = True
+
+
+class ExitCommand(QuitCommand):
+    def __init__(self, *args, **kwds):
+        self.__doc__ = QuitCommand.__doc__
+
+
+class LogoffCommand(QuitCommand):
+    def __init__(self, *args, **kwds):
+        self.__doc__ = QuitCommand.__doc__
+
+
+class BaseHelpCommand(BaseCommand):
+    """
+
+    """
+    skipHelp = True
+    helpTextMethod = ""
+
+
+class ShortHelpCommand(BaseHelpCommand):
+    """
+
+    """
+    skipHelp = True
+    helpTextMethod = "getSummary"
+
+    def _doCommand(self, player):
+        from openpix import command
+        klassData = inspect.getmembers(command, inspect.isclass)
+        sorted(klassData)
+        print
+        for klassName, klass in klassData:
+            if klass.skipHelp:
+                continue
+            obj = klass()
+            print "  %-10s     %s" % (obj.getCommandName(), obj.getSummary())
+        print
+
+class HelpCommand(BaseCommand):
+    """
+    Interactive help for commands (not implemented)
+    """
+    summary = "Interactive help for commands (not implemented)"
+    usage = "%s [command]"
+    skipHelp = False
+    helpTextMethod = "getDesc"
 
     def _doCommand(self, player):
         pass
 
-    def __call__(self, player ):
-        print self.verbProg.capitalize()+"..."
-        self._doCommand(player)
 
-
-class MoveCommand(Command):
-    def __init__(self, quals):
-        super(MoveCommand,self).__init__("MOVE", "moving")
-        self.direction = quals["direction"][0]
-
-    @staticmethod
-    def helpDescription():
-        return """MOVE or GO - go NORTH, SOUTH, EAST, or WEST
-          (can abbreviate as 'GO N' and 'GO W', or even just 'E' and 'S')"""
+class EnableCommand(BaseCommand):
+    """
+    Turn on privileged commands (not implemented)
+    """
+    summary = "Turn on privileged commands (not implemented)"
+    usage = "%s [<priv_level>]"
+    skipHelp = False
 
     def _doCommand(self, player):
-        rm = player.room
-        nextRoom = rm.doors[
-            {
-            "N":0,
-            "S":1,
-            "E":2,
-            "W":3,
-            }[self.direction]
-            ]
-        if nextRoom:
-            player.moveTo( nextRoom )
-        else:
-            print "Can't go that way."
+        pass
 
 
-class QuitCommand(Command):
-    def __init__(self, quals):
-        super(QuitCommand,self).__init__("QUIT", "quitting")
-
-    @staticmethod
-    def helpDescription():
-        return "QUIT or Q - ends the game"
+class LoginCommand(BaseCommand):
+    """
+    Log in as a particular user (not implemented)
+    """
+    summary = "Log in as a particular user (not implemented)"
+    usage = "%s"
+    skipHelp = False
 
     def _doCommand(self, player):
-        print "Ok...."
-        player.gameOver = True
+        pass
 
 
-class HelpCommand(Command):
-    def __init__(self, quals):
-        super(HelpCommand,self).__init__("HELP", "helping")
+class PingCommand(BaseCommand):
+    """
+    Test connectivity from specified interface to an IP address (not implemented)
+    """
+    summary = "Send echo messages (not implemented)"
+    usage = """
+        %s [if_name] <host> [data <pattern>] [repeat <count>] [size <bytes>]
+                    [timeout <seconds>] [validate]
+        """
+    syntax = """
+        [if_name]   The interface name, as specified by the 'nameif' command,
+                    by which <host> is accessible.  If not supplied, then <host>
+                    is resolved to an IP address and then the routing table
+                    is consulted to determine the destination interface.
 
-    @staticmethod
-    def helpDescription():
-        return "HELP or H or ? - displays this help message"
+        <host>      IPv4 address, IPv6 address or name of host to ping.
+
+        <pattern>   16 bit data pattern in hex.
+
+        <count>     Repeat count.
+
+        <bytes>     Datagram size in bytes.
+
+        <seconds>   Timeout in seconds.
+
+        validate    Validate reply data.
+        """
+    skipHelp = False
 
     def _doCommand(self, player):
-        print "Enter any of the following commands (not case sensitive):"
-        for cmd in [
-            MoveCommand,
-            QuitCommand,
-            HelpCommand,
-            ]:
-            print "  - %s" % cmd.helpDescription()
-        print
+        pass
 
 
+class ShowCommand(BaseCommand):
+    """
+    Display specific information to the console (not implemented)
+    """
+    summary = "Show running system information (not implemented)"
+    usage = "%s [command [subcommand]]"
+    skipHelp = False
+
+    def _doCommand(self, player):
+        pass
 
 
+class TracerouteCommand(BaseCommand):
+    """
+    Print the route packets take to a network host (not implemented)
+    """
+    summary = "Trace route to destination (not implemented)"
+    usage = """
+        %s <destination> [source <src_address|src_intf>]
+                    [numeric] [timeout <time>] [ttl <min-ttl> <max-ttl>]
+                    [probe <probes>] [port <port-value>] [use-icmp]
+        """
+    syntax = """
+        c_intf      Interface through which the destination is accessible
+        numeric     Do not resolve addresses to hostnames
+        time        The time in seconds to wait for a response to a probe
+        min-ttl     Minimum time-to-live value used in probe packets
+        max-ttl     Maximum time-to-live value used in probe packets
+        probes      The number of probes to send for each TTL value
+        port-value  Base UDP destination port used in probes
+        use-icmp    Use ICMP probes instead of UDP probes
+        """
+    skipHelp = False
 
+    def _doCommand(self, player):
+        pass
 
