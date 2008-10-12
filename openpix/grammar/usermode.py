@@ -1,6 +1,6 @@
 from pyparsing import ParseException, replaceWith, empty, Literal, Optional
 
-from openpix import command
+from openpix.commands import usermode
 from openpix.util import oneOfCaseless
 
 
@@ -67,21 +67,21 @@ def getUserEXECModeGrammar(parser):
     tracerouteCommand = tracerouteVerb + shortHelpOption
 
     quitCommand.setParseAction(
-        parser.makeCommandParseAction(command.QuitCommand))
+        parser.makeCommandParseAction(usermode.QuitCommand))
     helpCommand.setParseAction(
-        parser.makeCommandParseAction(command.HelpCommand))
+        parser.makeCommandParseAction(usermode.HelpCommand))
     shortHelpCommand.setParseAction(
-        parser.makeCommandParseAction(command.ShortHelpCommand))
+        parser.makeCommandParseAction(usermode.ShortHelpCommand))
     enableCommand.setParseAction(
-        parser.makeCommandParseAction(command.EnableCommand))
+        parser.makeCommandParseAction(usermode.EnableCommand))
     pingCommand.setParseAction(
-        parser.makeCommandParseAction(command.PingCommand))
+        parser.makeCommandParseAction(usermode.PingCommand))
     loginCommand.setParseAction(
-        parser.makeCommandParseAction(command.LoginCommand))
+        parser.makeCommandParseAction(usermode.LoginCommand))
     showCommand.setParseAction(
-        parser.makeCommandParseAction(command.ShowCommand))
+        parser.makeCommandParseAction(usermode.ShowCommand))
     tracerouteCommand.setParseAction(
-        parser.makeCommandParseAction(command.TracerouteCommand))
+        parser.makeCommandParseAction(usermode.TracerouteCommand))
 
     return (
         enableCommand | shortHelpCommand | helpCommand | quitCommand |

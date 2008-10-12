@@ -1,103 +1,11 @@
 import inspect
 
+
 from openpix import util
+from openpix.commands import base
 
 
-def aOrAn(item):
-    if item.desc[0] in "aeiou":
-        return "an"
-    else:
-        return "a"
-
-
-def enumerateItems(l):
-    if len(l) == 0: return "nothing"
-    out = []
-    for item in l:
-        if len(l)>1 and item == l[-1]:
-            out.append("and")
-        out.append(aOrAn(item))
-        if item == l[-1]:
-            out.append(item.desc)
-        else:
-            if len(l)>2:
-                out.append(item.desc+",")
-            else:
-                out.append(item.desc)
-    return " ".join(out)
-
-
-class BaseCommand(object):
-    """
-    Base class for commands.
-    """
-    skipHelp = True
-    summary = ""
-    usage = ""
-    syntax = ""
-
-    def __init__(self, tokens=[]):
-        self.tokens = tokens
-
-    def __call__(self, user):
-        self._doCommand(user)
-
-    def _doCommand(self, user):
-        """
-        This method provides the action for each command.
-
-        This needs to be overridden by subclasses.
-        """
-        raise NotImplementedError
-
-    def getCommandName(self):
-        """
-
-        """
-        return self.__class__.__name__.replace('Command', '').lower()
-
-    def getDesc(self):
-        """
-
-        """
-        return self.__doc__.strip()
-
-    def getUsage(self):
-        """
-
-        """
-        return self.usage.strip() % self.getCommandName()
-
-    def printShortHelp(self):
-        """
-
-        """
-        print "\n  %s\n\n  %s\n" % (self.getSummary(), self.getUsage())
-
-    def getSyntax(self):
-        """
-
-        """
-        return self.syntax
-
-    def getSummary(self):
-        """
-
-        """
-        return self.summary
-
-    def getHelp(self):
-        """
-
-        """
-        syntax = self.getSyntax()
-        if syntax:
-            syntax = "SYNTAX:\n%s" % syntax
-        return "\nUSAGE:\n%s\nDESCRIPTION:\n%s\n" % (
-            self.getUsage(), self.getDesc(), syntax)
-
-
-class EnableCommand(BaseCommand):
+class EnableCommand(base.BaseCommand):
     """
     Turn on privileged commands
     """
@@ -109,7 +17,7 @@ class EnableCommand(BaseCommand):
         print "not implemented"
 
 
-class LoginCommand(BaseCommand):
+class LoginCommand(base.BaseCommand):
     """
     Log in as a particular user
     """
@@ -121,7 +29,7 @@ class LoginCommand(BaseCommand):
         print "not implemented"
 
 
-class QuitCommand(BaseCommand):
+class QuitCommand(base.BaseCommand):
     """
     Disable privileged commands, end configuration mode, or logout
     """
@@ -144,7 +52,7 @@ class LogoffCommand(QuitCommand):
         self.__doc__ = QuitCommand.__doc__
 
 
-class ShowCommand(BaseCommand):
+class ShowCommand(base.BaseCommand):
     """
     Display specific information to the console
     """
@@ -167,7 +75,7 @@ class ShowCommand(BaseCommand):
         elif show.startswith('his'):
             util.printHistory()
 
-class BaseHelpCommand(BaseCommand):
+class BaseHelpCommand(base.BaseCommand):
     """
 
     """
@@ -183,8 +91,8 @@ class ShortHelpCommand(BaseHelpCommand):
     helpTextMethod = "getSummary"
 
     def _doCommand(self, player):
-        from openpix import command
-        klassData = inspect.getmembers(command, inspect.isclass)
+        from openpix.commands import usermode
+        klassData = inspect.getmembers(usermode, inspect.isclass)
         sorted(klassData)
         print
         for klassName, klass in klassData:
@@ -195,7 +103,7 @@ class ShortHelpCommand(BaseHelpCommand):
         print
 
 
-class HelpCommand(BaseCommand):
+class HelpCommand(base.BaseCommand):
     """
     Interactive help for commands
     """
@@ -208,7 +116,7 @@ class HelpCommand(BaseCommand):
         print "not implemented"
 
 
-class PingCommand(BaseCommand):
+class PingCommand(base.BaseCommand):
     """
     Test connectivity from specified interface to an IP address
     """
@@ -241,7 +149,7 @@ class PingCommand(BaseCommand):
         print "not implemented"
 
 
-class TracerouteCommand(BaseCommand):
+class TracerouteCommand(base.BaseCommand):
     """
     Print the route packets take to a network host
     """
