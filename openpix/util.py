@@ -3,12 +3,17 @@ import re
 import crypt
 import random
 import socket
+import readline
 from datetime import datetime
+
+from pyparsing import oneOf
 
 from twisted.python import log
 from twisted.internet import ssl
 
 import openpix
+from openpix import art
+from openpix import meta
 
 
 dividerSegment = "_" * 34
@@ -19,6 +24,56 @@ defaultPrompt = "%s> " % basePrompt
 rootPrompt = "%s# " % basePrompt
 
 starterHelp = "Type help or '?' for a list of available commands."
+
+
+def printVersion():
+    print "\n"
+    print meta.longVersion
+    print "\n"
+
+
+def printCopyright():
+    print meta.copyright
+
+def printLicenseNotice():
+    """
+
+    """
+    print bannerDivider
+    print meta.licenseNotice
+    print bannerDivider
+
+
+def printSplashArt():
+    print bannerDivider
+    print art.splashLogo
+    print art.splashText
+    print bannerDivider
+
+
+def printBanner():
+    """
+    This function provides some beauty in the otherwise dull and boring life of
+    a shell's life.
+    """
+    print bannerDivider
+    print art.splashLogo
+    print art.splashText
+    print bannerDivider
+    print "\n%s" % meta.licenseNotice
+    print bannerDivider
+    print "\n%s" % starterHelp
+
+
+def printHistory():
+    for index in xrange(readline.get_current_history_length()):
+        command = readline.get_history_item(index)
+        if command != None:
+            print command
+
+
+def oneOfCaseless(string):
+    return oneOf(string, caseless=True)
 
 
 def boolify(data):

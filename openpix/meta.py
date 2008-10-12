@@ -2,16 +2,19 @@ name = "OpenPIX"
 shortName = "OpenPIX"
 summary = "Security Appliance Shell"
 description = "A PIX-like CLI for Open Source Firewalls"
-version = "0.0.0"
-longVersion = "%s %s Version %s" % (name, description, version)
+version = "0.0.1"
+longVersion = "%s %s, Version %s" % (name, description, version)
 projectURL = "https://launchpad.net/openpix"
-licenseType = "LGPL"
-licenseVersion = "2.1"
-licenseURL = "http://www.opensource.org/licenses/lgpl-2.1.php"
+
 copyright = """
 Copyright (c) 2006-2008 Duncan McGreggor
 Copyright (c) 2008 Duncan McGreggor, Canonical Ltd
 """
+
+licenseType = "LGPL"
+licenseVersion = "2.1"
+licenseURL = "http://www.opensource.org/licenses/lgpl-2.1.php"
+
 licenseReference = """
 This application is free software; you can redistribute it and/or modify it
 under the terms of the GNU Lesser General Public License as published by the

@@ -1,9 +1,11 @@
 import readline
 
-from openpix import art
-from openpix import meta
-from openpix.util import bannerDivider, defaultPrompt, starterHelp
+from openpix import util
 from openpix.grammar.parser import Parser
+
+
+maxHistoryLines = 500
+readline.set_history_length(maxHistoryLines)
 
 
 class User(object):
@@ -13,21 +15,7 @@ class User(object):
     def __init__(self, name):
         self.name = name
         self.gameOver = False
-        self.inv = []
-
-
-def printBanner():
-    """
-    This function provides some beauty in the otherwise dull and boring life of
-    a shell's life.
-    """
-    print bannerDivider
-    print art.splashLogo
-    print art.splashText
-    print bannerDivider
-    print "\n%s" % meta.licenseNotice
-    print bannerDivider
-    print "\n%s" % starterHelp
+        self.isEnabled = False
 
 
 def processResults(parseResults, user):
@@ -51,10 +39,10 @@ def setUpShell(user):
     This function does everything necessary to start a shell and parse commands
     as they are entered.
     """
-    printBanner()
+    util.printBanner()
     # create parser
     parser = Parser()
     while not user.gameOver:
-        commandString = raw_input(defaultPrompt)
+        commandString = raw_input(util.defaultPrompt)
         processResults(parser.parseCommand(commandString), user)
 

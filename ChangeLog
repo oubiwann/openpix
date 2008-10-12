@@ -9,6 +9,13 @@ PIX CLI.
 * White space formatting.
 * Split up shell setup function into several smaller functions.
 * Moved banner and prompt strings into util module.
+* Added oneOfCaseless utility function pyparsing function wrapper.
+* Reordered commands.
+* Added print functions to util.
+* Added some basic show subcommands.
+* Incremented version number, now that there's actually something here.
+* Added more show subcommands.
+* Added missing grammar files.
 
 2008.10.11
 

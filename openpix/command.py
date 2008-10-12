@@ -1,5 +1,7 @@
 import inspect
 
+from openpix import util
+
 
 def aOrAn(item):
     if item.desc[0] in "aeiou":
@@ -95,6 +97,30 @@ class BaseCommand(object):
             self.getUsage(), self.getDesc(), syntax)
 
 
+class EnableCommand(BaseCommand):
+    """
+    Turn on privileged commands
+    """
+    summary = "Turn on privileged commands"
+    usage = "%s [<priv_level>]"
+    skipHelp = False
+
+    def _doCommand(self, player):
+        print "not implemented"
+
+
+class LoginCommand(BaseCommand):
+    """
+    Log in as a particular user
+    """
+    summary = "Log in as a particular user"
+    usage = "%s"
+    skipHelp = False
+
+    def _doCommand(self, player):
+        print "not implemented"
+
+
 class QuitCommand(BaseCommand):
     """
     Disable privileged commands, end configuration mode, or logout
@@ -117,6 +143,29 @@ class LogoffCommand(QuitCommand):
     def __init__(self, *args, **kwds):
         self.__doc__ = QuitCommand.__doc__
 
+
+class ShowCommand(BaseCommand):
+    """
+    Display specific information to the console
+    """
+    summary = "Show running system information"
+    usage = "%s [command [subcommand]]"
+    skipHelp = False
+
+    def _doCommand(self, player):
+        show = self.tokens.show
+        if show.startswith('lic'):
+            util.printLicenseNotice()
+        elif show.startswith('ver'):
+            util.printVersion()
+        elif show.startswith('spl'):
+            util.printSplashArt()
+        elif show.startswith('ban'):
+            util.printBanner()
+        elif show.startswith('cop'):
+            util.printCopyright()
+        elif show.startswith('his'):
+            util.printHistory()
 
 class BaseHelpCommand(BaseCommand):
     """
@@ -159,30 +208,6 @@ class HelpCommand(BaseCommand):
         print "not implemented"
 
 
-class EnableCommand(BaseCommand):
-    """
-    Turn on privileged commands
-    """
-    summary = "Turn on privileged commands"
-    usage = "%s [<priv_level>]"
-    skipHelp = False
-
-    def _doCommand(self, player):
-        print "not implemented"
-
-
-class LoginCommand(BaseCommand):
-    """
-    Log in as a particular user
-    """
-    summary = "Log in as a particular user"
-    usage = "%s"
-    skipHelp = False
-
-    def _doCommand(self, player):
-        print "not implemented"
-
-
 class PingCommand(BaseCommand):
     """
     Test connectivity from specified interface to an IP address
@@ -210,18 +235,6 @@ class PingCommand(BaseCommand):
 
         validate    Validate reply data.
         """
-    skipHelp = False
-
-    def _doCommand(self, player):
-        print "not implemented"
-
-
-class ShowCommand(BaseCommand):
-    """
-    Display specific information to the console
-    """
-    summary = "Show running system information"
-    usage = "%s [command [subcommand]]"
     skipHelp = False
 
     def _doCommand(self, player):

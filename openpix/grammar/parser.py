@@ -13,7 +13,6 @@ class Parser(object):
 
     def makeCommandParseAction(self, cls):
         def cmdParseAction(string, location, tokens):
-            args = [string, location, tokens]
             return cls(tokens=tokens)
         return cmdParseAction
 
@@ -29,6 +28,6 @@ class Parser(object):
             print e.msg
         except ParseException, e:
             # XXX
-            #print e
+            print e
             print "ERROR: Invalid input detected."
 

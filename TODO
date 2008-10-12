@@ -5,8 +5,18 @@ Startup
  * collect system information
  * label it all as "reading the flash"
  * parse a ~/.openpixrc file for preferences
+ * load previous command line history
 
 Flash Drive
 -----------
  * a pickle
  * stores all non-system informtion when "write mem" is called
+
+Command Line History
+--------------------
+ * add support for saving history (to pickle?)
+
+Show Command
+-------------
+ * "show ?" should display a list of legal subcommands
+
