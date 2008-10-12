@@ -1,10 +1,12 @@
 import inspect
 
-def aOrAn( item ):
+
+def aOrAn(item):
     if item.desc[0] in "aeiou":
         return "an"
     else:
         return "a"
+
 
 def enumerateItems(l):
     if len(l) == 0: return "nothing"
@@ -12,7 +14,7 @@ def enumerateItems(l):
     for item in l:
         if len(l)>1 and item == l[-1]:
             out.append("and")
-        out.append( aOrAn( item ) )
+        out.append(aOrAn(item))
         if item == l[-1]:
             out.append(item.desc)
         else:
@@ -32,7 +34,7 @@ class BaseCommand(object):
     usage = ""
     syntax = ""
 
-    def __init__(self, tokens):
+    def __init__(self, tokens=[]):
         self.tokens = tokens
 
     def __call__(self, user):

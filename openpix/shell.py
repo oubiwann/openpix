@@ -1,39 +1,26 @@
-import socket
 import readline
 
 from openpix import art
 from openpix import meta
-from openpix.grammar import Parser
+from openpix.util import bannerDivider, defaultPrompt, starterHelp
+from openpix.grammar.parser import Parser
 
-
-starterHelp = "Type help or '?' for a list of available commands."
-
-dividerSegment = "_" * 34
-bannerDivider = "\n %s .:|:. %s\n" % (dividerSegment, dividerSegment)
-
-defaultPrompt = "openpix@%s> " % socket.gethostname()
-rootPrompt = "openpix@%s# " % socket.gethostname()
 
 class User(object):
+    """
+
+    """
     def __init__(self, name):
         self.name = name
         self.gameOver = False
         self.inv = []
 
-    def moveTo(self, rm):
-        self.room = rm
-        rm.enter(self)
-        if self.gameOver:
-            if rm.desc:
-                rm.describe()
-            print "Game over!"
-        else:
-            rm.describe()
 
-
-def setUpShell(user):
-    # create parser
-    parser = Parser()
+def printBanner():
+    """
+    This function provides some beauty in the otherwise dull and boring life of
+    a shell's life.
+    """
     print bannerDivider
     print art.splashLogo
     print art.splashText
@@ -41,15 +28,33 @@ def setUpShell(user):
     print "\n%s" % meta.licenseNotice
     print bannerDivider
     print "\n%s" % starterHelp
+
+
+def processResults(parseResults, user):
+    """
+    This function performs simple decision-making tasks based on the obtained
+    results.
+    """
+    if parseResults is not None:
+        cmd = parseResults.command
+        # XXX
+        # not sure if this switching logic should happen here or in the
+        # command classes during __init__ and __call__
+        if cmd.tokens.shortHelp:
+            cmd.printShortHelp()
+        else:
+            cmd(user)
+
+
+def setUpShell(user):
+    """
+    This function does everything necessary to start a shell and parse commands
+    as they are entered.
+    """
+    printBanner()
+    # create parser
+    parser = Parser()
     while not user.gameOver:
-        cmdstr = raw_input(defaultPrompt)
-        cmd = parser.parseCommand(cmdstr)
-        if cmd is not None:
-            # XXX
-            # not sure if this switching logic should happen here or in the
-            # command classes during __init__ and __call__
-            if cmd.command.tokens.shortHelp:
-                cmd.command.printShortHelp()
-            else:
-                cmd.command(user)
+        commandString = raw_input(defaultPrompt)
+        processResults(parser.parseCommand(commandString), user)
 

@@ -3,6 +3,12 @@
 * Updated TODO.
 * Added support for <command name> ? for short help/usage.
 * Added additional command checking in while loop of shell.
+* Converted the grammar module to a subpackage in anticipation of the large
+(and many) grammars that are to come for the 4 separate functionalities of the
+PIX CLI.
+* White space formatting.
+* Split up shell setup function into several smaller functions.
+* Moved banner and prompt strings into util module.
 
 2008.10.11
 

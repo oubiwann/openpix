@@ -4,6 +4,7 @@ Startup
  * read "flash" pickle
  * collect system information
  * label it all as "reading the flash"
+ * parse a ~/.openpixrc file for preferences
 
 Flash Drive
 -----------

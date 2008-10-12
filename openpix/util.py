@@ -2,12 +2,23 @@ import os
 import re
 import crypt
 import random
+import socket
 from datetime import datetime
 
 from twisted.python import log
 from twisted.internet import ssl
 
 import openpix
+
+
+dividerSegment = "_" * 34
+bannerDivider = "\n %s .:|:. %s\n" % (dividerSegment, dividerSegment)
+
+basePrompt = "openpix@%s" % socket.gethostname()
+defaultPrompt = "%s> " % basePrompt
+rootPrompt = "%s# " % basePrompt
+
+starterHelp = "Type help or '?' for a list of available commands."
 
 
 def boolify(data):
