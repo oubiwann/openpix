@@ -1,3 +1,12 @@
+2008.10.13
+
+* Updated the TODO with a strategy for implementing command completion in
+OpenPIX; with ideas about making system calls; and with a strategy for
+breaking down firewall control into different areas of code.
+* Stubbed out control subpackages.
+* Added a quick reference for commonly used pfctl commands to the pf backend
+stub.
+
 2008.10.12
 
 * Updated TODO.

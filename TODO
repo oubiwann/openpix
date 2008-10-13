@@ -11,6 +11,16 @@ Flash Drive
 -----------
  * a pickle
  * stores all non-system informtion when "write mem" is called
+ * update "show" command to support 
+
+Command Line Completion
+-----------------------
+ * create a class modeled after rlcompleter.Complete
+ * write global_matches to return the list of all possible commands
+ * devise a means of getting a list of all possible commads
+ * write attr_matches to use spaces (e.g., subcommands) instead of dots (for
+   python modules, etc.)
+ * set the readline completer to the overridden complete method 
 
 Command Line History
 --------------------
@@ -19,4 +29,33 @@ Command Line History
 Show Command
 -------------
  * "show ?" should display a list of legal subcommands
+
+System Commads
+--------------
+
+OpenPIX ping and traceroute command will depend on the underly os to esecute
+the respective binaries of the same name. In addition, firewall commands will
+need to be executed against the the system binary that makes the changes to the
+running firewall software (e.g., pfctl for packet filter on OpenBSD). As such,
+a proper and efficient means of executing shell commands is needed. There are
+reported bugs with the subprocess module, so that needs to be investigated. We
+need the solution that is most bug-free and least memory-consumptive.
+
+Firewall Control
+----------------
+
+Actual control of the firewall will be made via system calls (see above).
+Different firewall/packet filtering software will have different means of
+accomplishing this. OpenPIX needs to support the ability to add an arbitrary
+number of such potential backends:
+ * a configuration option in .openpixrc for setting the desired backend
+ * an "enable" (privileged mode) command for setting the backend
+ * logic in the appropriate openpix.commands.*.*._doCommand methods that ensure
+   that the configured backend is the one aginst which commands are being
+   executed
+ * an openpix.system subpackage:
+    - openpix.system.call - code for executing system calls
+    - openpix.system.backends.pf, iptables, ipfw, etc. - code for different
+      backends
+
 

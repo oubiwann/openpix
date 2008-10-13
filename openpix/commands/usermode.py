@@ -75,6 +75,7 @@ class ShowCommand(base.BaseCommand):
         elif show.startswith('his'):
             util.printHistory()
 
+
 class BaseHelpCommand(base.BaseCommand):
     """
 
