@@ -1,0 +1,2 @@
+def getConfigModeGrammar(parser):
+    pass

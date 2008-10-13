@@ -1,6 +1,8 @@
 import readline
 
 from openpix import util
+from openpix import constants
+from openpix.system import call as system
 from openpix.grammar.parser import Parser
 
 
@@ -24,11 +26,6 @@ class Completer(object):
         """
 
 
-maxHistoryLines = 500
-readline.set_history_length(maxHistoryLines)
-readline.set_completer(Completer().complete)
-readline.parse_and_bind('tab: complete')
-
 
 class User(object):
     """
@@ -36,35 +33,113 @@ class User(object):
     """
     def __init__(self, name):
         self.name = name
-        self.gameOver = False
-        self.isEnabled = False
+        self.logout = False
 
 
-def processResults(parseResults, user):
+class Shell(object):
     """
-    This function performs simple decision-making tasks based on the obtained
-    results.
+
     """
-    if parseResults is not None:
-        cmd = parseResults.command
-        # XXX
-        # not sure if this switching logic should happen here or in the
-        # command classes during __init__ and __call__
-        if cmd.tokens.shortHelp:
-            cmd.printShortHelp()
-        else:
-            cmd(user)
+    def __init__(self):
+        self.system = None
+        self.mode = None
+        self.backend = None
+        self.user = None
+        self.privUser = None
+        self.parser = None
+        self.prompt = ''
+        self.setMode(constants.usermode)
+        self.setSystem()
+
+    def setSystem(self):
+        """
+        Identify the type of system that the software is running on, import the
+        appropriate module, instantiate the System object, and set it on the
+        shell.
+        """
+        systemName = system.call("uname")
+        if systemName == system.linux.System.uname:
+            self.system = system.linux.System()
+        elif systemName == system.bsd.System.uname:
+            self.system = system.bsd.System()
+        elif systemName == system.darwin.System.uname:
+            self.system = system.darwin.System()
 
 
-def setUpShell(user):
-    """
-    This function does everything necessary to start a shell and parse commands
-    as they are entered.
-    """
-    util.printBanner()
-    # create parser
-    parser = Parser()
-    while not user.gameOver:
-        commandString = raw_input(util.defaultPrompt)
-        processResults(parser.parseCommand(commandString), user)
+    def getSystem(self):
+        """
+
+        """
+        return self.system
+
+    def setUser(self, user):
+        """
+
+        """
+        self.user = user
+
+    def setMode(self, mode):
+        """
+        Mode is an object that has attributes which define the mode name and
+        the mode prompt.
+        """
+        self.mode = mode
+
+    def getBackend(self):
+        """
+
+        """
+        return self.backend
+
+    def setUpCompletion(self):
+        # XXX get max lines from config
+        maxHistoryLines = 500
+        readline.set_history_length(maxHistoryLines)
+        readline.set_completer(Completer().complete)
+        readline.parse_and_bind('tab: complete')
+
+    def getMode(self):
+        """
+
+        """
+        return self.mode
+
+    def processResults(self, parseResults):
+        """
+        This function performs simple decision-making tasks based on the
+        obtained results.
+        """
+        if parseResults is not None:
+            cmd = parseResults.command
+            # XXX
+            # not sure if this switching logic should happen here or in the
+            # command classes during __init__ and __call__
+            if cmd.tokens.shortHelp:
+                cmd.printShortHelp()
+            elif cmd.tokens.privMode:
+                # do authentication checks
+                # XXX
+                auth = True
+                if auth:
+                    self.setMode(constants.privmode)
+                    cmd(self.user)
+            else:
+                cmd(self.user)
+
+    def login(self, user):
+        """
+        This function does everything necessary to start a shell and parse
+        commands as they are entered.
+        """
+        self.setUser(user)
+        util.printBanner()
+        self.setUpCompletion()
+        # create parser
+        self.parser = Parser(self)
+
+    def run(self):
+        while not self.user.logout:
+            commandString = raw_input(self.getMode().prompt)
+            self.processResults(
+                self.parser.parseCommand(commandString, self.getMode()))
 

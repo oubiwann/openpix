@@ -1,19 +1,74 @@
 Thought Placeholders
 --------------------
+ * DONE - add LICENSE file
  * replace as much of the introspection as possible with interface lookups.
+    - this is needed in order to support composition of subclasses (e.g.,
+      ShortHelpCommand(BaseShortHelpCommand) in usermode finding -- and being
+      able to pring short help for -- all IUserCommand and IBaseCommand
+      instances, while at the same time privmode's
+      ShortHelpCommand(BaseShortHelpCommand) class is able to display all
+      IBaseCommand and IPrivCommand subclasses, but not IUserCommand
+      subclasses)
+    - Need the following interfaces:
+        . IBaseCommand
+        . IUserCommand
+        . IPrivCommand
+        . IConfCommand
+    - class registery instead of inspect? Look at zope.interface/zope.component
+ * move commands that are common to both usermode and privmode out of
+   commands.usermode and into commands.common - note that the interface work
+   above needs to be done first
+ * command work priority:
+    - usermode
+        help
+        enable [password]
+        show flash
+    - execmode
+        write mem|terminal|net|erase
+        show interface
+        show ip address
+        show memory
+        show configuration
+        show runnig-config
+        show startup-config
+        config term
+        ping
+        reload
+    - configmode
+        backend pf|iptables|ipf|ipfw
+        login splash [cisco] on|off
+        login logo on|off
+        login title on|off
+        history on|off
+        history persist on|off
+        nameif
+        interface
+        ip address
+        nat
+        global
+        route
 
 Startup
 -------
- * read all config files
- * read "flash" pickle
- * collect system information
- * label it all as "reading the flash"
- * parse a ~/.openpixrc file for preferences
- * load previous command line history
+ * firewall-specific:
+    - read all config files
+ * system-specific:
+    - collect system information like RAM, interfaces, etc.
+ * OpenPIX-specific:
+    - parse a ~/.openpixrc file for preferences (configParser/.ini format)
+    - load previous command line history
+    - load "flash" pickle (~/.openpix/flash)
+    - label it all as "reading the flash"
+ * display currently configured backend with a note on how to change that
+   (enable + config term + backend *) as well as a configuration option for
+   disabling that notice during startup
+ * provide configuration options for disabling splash, logo, text
+ * display a checksum of the source code
+ * identify the system on startup and choose the appropriate call module.
 
 Flash Drive
 -----------
- * a pickle
+ * a pickle in ~/.openpix/
  * stores all non-system informtion when "write mem" is called
  * update "show" command to support 
 
@@ -29,11 +84,23 @@ Command Line Completion
 
 Command Line History
 --------------------
- * add support for saving history (to pickle?)
+ * add support for saving history (to pickle?; will require "write mem")
 
 Show Command
 -------------
- * "show ?" should display a list of legal subcommands
+ * DONE - "show ?" should display a list of legal subcommands
+
+Modes
+-----
+ * DONE - figure out what switching modes actually does... how is this functionality
+   reflected in the code?
+ * DONE - perhaps the parser should have access to all possible grammar instances and
+   switch between them, based on the current mode; this would require that:
+    - the parseCommand get passed an additional parameter, "mode"
+    - the shell be able to track state (need a Shell class)
+    - the shell have an attribute "mode"
+    - the shell intercept all mode change commands in order to set the shell
+      attribute "mode"
 
 System Commads
 --------------
@@ -54,13 +121,18 @@ Different firewall/packet filtering software will have different means of
 accomplishing this. OpenPIX needs to support the ability to add an arbitrary
 number of such potential backends:
  * a configuration option in .openpixrc for setting the desired backend
- * an "enable" (privileged mode) command for setting the backend
+ * an "enable" + "config term" (privileged mode) command for setting the
+   backend
  * logic in the appropriate openpix.commands.*.*._doCommand methods that ensure
    that the configured backend is the one aginst which commands are being
    executed
  * an openpix.system subpackage:
-    - openpix.system.call - code for executing system calls
+    - DONE - openpix.system.call - code for executing system calls
     - openpix.system.backends.pf, iptables, ipfw, etc. - code for different
       backends
 
+Syslog
+------
+
+Gonna need to support this.
 

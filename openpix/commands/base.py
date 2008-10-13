@@ -7,7 +7,8 @@ class BaseCommand(object):
     usage = ""
     syntax = ""
 
-    def __init__(self, tokens=[]):
+    def __init__(self, parser, tokens=[]):
+        self.parser = parser
         self.tokens = tokens
 
     def __call__(self, user):
@@ -66,3 +67,8 @@ class BaseCommand(object):
             syntax = "SYNTAX:\n%s" % syntax
         return "\nUSAGE:\n%s\nDESCRIPTION:\n%s\n" % (
             self.getUsage(), self.getDesc(), syntax)
+
+class BaseShowCommand(object):
+    """
+
+    """

@@ -2,7 +2,6 @@ import os
 import re
 import crypt
 import random
-import socket
 import readline
 from datetime import datetime
 
@@ -14,14 +13,11 @@ from twisted.internet import ssl
 import openpix
 from openpix import art
 from openpix import meta
+from openpix.constants import defaultPrompt
 
 
 dividerSegment = "_" * 34
 bannerDivider = "\n %s .:|:. %s\n" % (dividerSegment, dividerSegment)
-
-basePrompt = "openpix@%s" % socket.gethostname()
-defaultPrompt = "%s> " % basePrompt
-rootPrompt = "%s# " % basePrompt
 
 starterHelp = "Type help or '?' for a list of available commands."
 

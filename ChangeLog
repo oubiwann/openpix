@@ -15,6 +15,28 @@ classes (as class attributes) in commands.usermode.
 * Removed unused imports.
 * Added support for displaying subcommands with short help ("?").
 * Added a TODO note about replacing the excessive introspection.
+* Added a placeholder in the TODO for syslog support.
+* Changed the remaining "player" references to "user" and "gameOver" to
+"logout".
+* Added a usermode file.
+* Created shell class.
+* Chnaged parser to support multiple grammars, selected based on a given mode.
+* Moved setResultsName and LineEnd grammar updates out of grammar.parser and
+into grammar.*.get*Grammar functions.
+* Added stubs for additional grammar getters.
+* Added a placeholder for common grammar code.
+* Changed system.call from a module to a subpackage, and added placeholders.
+* Added the ability to set the system object during shell initialization.
+* Added a simple call function.
+* Added system and backend show sub-commands.
+* Added parser attribute to commands.
+* Added shell attribute to parser.
+* Changed prompts to be mode constant attributes.
+* Added support for basic enable mode.
+* Added stubs for privmode command modules.
+* Added license.
+* Added a sandbox dir with some example adaptor code that will enable me to get
+rid of the ugly introspection that I was doing.
 
 2008.10.12
 

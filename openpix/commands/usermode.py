@@ -16,9 +16,9 @@ class EnableCommand(base.BaseCommand):
     skipHelp = False
     legalVerbs = oneOfCaseless("enable enab en")
 
-    def _doCommand(self, player):
-        print "not implemented"
-
+    def _doCommand(self, user):
+        # XXX add support for changing the password
+        pass
 
 class LoginCommand(base.BaseCommand):
     """
@@ -29,7 +29,7 @@ class LoginCommand(base.BaseCommand):
     skipHelp = False
     legalVerbs = oneOfCaseless("login logi")
 
-    def _doCommand(self, player):
+    def _doCommand(self, user):
         print "not implemented"
 
 
@@ -42,9 +42,9 @@ class QuitCommand(base.BaseCommand):
     skipHelp = False
     legalVerbs = oneOfCaseless("quit q exit ex logout logou logo")
 
-    def _doCommand(self, player):
+    def _doCommand(self, user):
         print "\nLogoff\n"
-        player.gameOver = True
+        user.logout = True
 
 
 class ExitCommand(QuitCommand):
@@ -77,6 +77,8 @@ class ShowSubCommands(object):
     banner = oneOfCaseless("banner ban")
     copyright = oneOfCaseless("copyright copyr copy cop")
     history = oneOfCaseless("history hist his")
+    backend = oneOfCaseless("backend back")
+    system = oneOfCaseless("system syst sys")
 
     def getLegalVerbs(self):
         """
@@ -104,29 +106,43 @@ class ShowCommand(base.BaseCommand):
     legalVerbs = oneOfCaseless("show sho sh")
     subcommands = ShowSubCommands()
 
-    def _doCommand(self, player):
+    def _doCommand(self, user):
         show = self.tokens.show
-        if show.startswith('lic'):
+        if not show:
+            self.printSubCommands()
+        elif show in self.subcommands.license.exprs:
             util.printLicenseNotice()
-        elif show.startswith('ver'):
+        elif show in self.subcommands.version.exprs:
             util.printVersion()
-        elif show.startswith('spl'):
+        elif show in self.subcommands.splash.exprs:
             util.printSplashArt()
-        elif show.startswith('ban'):
+        elif show in self.subcommands.banner.exprs:
             util.printBanner()
-        elif show.startswith('cop'):
+        elif show in self.subcommands.copyright.exprs:
             util.printCopyright()
-        elif show.startswith('his'):
+        elif show in self.subcommands.history.exprs:
             util.printHistory()
+        elif show in self.subcommands.backend.exprs:
+            print "\n%s\n" % self.parser.shell.getBackend()
+        elif show in self.subcommands.system.exprs:
+            print "\n%s\n" % self.parser.shell.getSystem().longName
+
+    def printSubCommands(self):
+        """
+
+        """
+        print
+        print "  Sub-commands:"
+        for verb in self.subcommands.getLegalVerbs():
+            print "    %s" % verb.exprs[0].returnString
+        print 
 
     def printShortHelp(self):
         """
 
         """
         super(ShowCommand, self).printShortHelp()
-        print "  Sub-commands:"
-        for verb in self.subcommands.getLegalVerbs():
-            print "    %s" % verb.exprs[0].returnString
+        self.printSubCommands()
 
 
 class BaseHelpCommand(base.BaseCommand):
@@ -145,7 +161,7 @@ class ShortHelpCommand(BaseHelpCommand):
     helpTextMethod = "getSummary"
     legalVerbs = oneOfCaseless("?")
 
-    def _doCommand(self, player):
+    def _doCommand(self, user):
         from openpix.commands import usermode
         def isCommandClass(klass):
             """
@@ -160,7 +176,7 @@ class ShortHelpCommand(BaseHelpCommand):
         for klassName, klass in klassData:
             if klass.skipHelp:
                 continue
-            obj = klass()
+            obj = klass(self.parser)
             print "  %-10s     %s" % (obj.getCommandName(), obj.getSummary())
         print
 
@@ -175,7 +191,7 @@ class HelpCommand(base.BaseCommand):
     helpTextMethod = "getDesc"
     legalVerbs = oneOfCaseless("help h")
 
-    def _doCommand(self, player):
+    def _doCommand(self, user):
         print "not implemented"
 
 
@@ -209,7 +225,7 @@ class PingCommand(base.BaseCommand):
     skipHelp = False
     legalVerbs = oneOfCaseless("ping pi")
 
-    def _doCommand(self, player):
+    def _doCommand(self, user):
         print "not implemented"
 
 
@@ -236,7 +252,7 @@ class TracerouteCommand(base.BaseCommand):
     skipHelp = False
     legalVerbs = oneOfCaseless("traceroute tracert trace trac tra tr")
 
-    def _doCommand(self, player):
+    def _doCommand(self, user):
         print "not implemented"
 
 
