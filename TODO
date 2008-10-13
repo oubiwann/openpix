@@ -1,3 +1,7 @@
+Thought Placeholders
+--------------------
+ * replace as much of the introspection as possible with interface lookups.
+
 Startup
 -------
  * read all config files

@@ -14,6 +14,7 @@ classes (as class attributes) in commands.usermode.
 * Moved show subcommands into their own class in commands.usermode.
 * Removed unused imports.
 * Added support for displaying subcommands with short help ("?").
+* Added a TODO note about replacing the excessive introspection.
 
 2008.10.12
 
