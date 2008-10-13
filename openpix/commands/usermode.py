@@ -1,8 +1,10 @@
 import inspect
 
+from pyparsing import MatchFirst
 
 from openpix import util
 from openpix.commands import base
+from openpix.util import oneOfCaseless
 
 
 class EnableCommand(base.BaseCommand):
@@ -12,6 +14,7 @@ class EnableCommand(base.BaseCommand):
     summary = "Turn on privileged commands"
     usage = "%s [<priv_level>]"
     skipHelp = False
+    legalVerbs = oneOfCaseless("enable enab en")
 
     def _doCommand(self, player):
         print "not implemented"
@@ -24,6 +27,7 @@ class LoginCommand(base.BaseCommand):
     summary = "Log in as a particular user"
     usage = "%s"
     skipHelp = False
+    legalVerbs = oneOfCaseless("login logi")
 
     def _doCommand(self, player):
         print "not implemented"
@@ -36,6 +40,7 @@ class QuitCommand(base.BaseCommand):
     summary = "Exit from the EXEC"
     usage = "%s"
     skipHelp = False
+    legalVerbs = oneOfCaseless("quit q exit ex logout logou logo")
 
     def _doCommand(self, player):
         print "\nLogoff\n"
@@ -52,6 +57,43 @@ class LogoffCommand(QuitCommand):
         self.__doc__ = QuitCommand.__doc__
 
 
+class ShowSubCommands(object):
+    """
+    The subcommands for the show command.
+
+    PIX:
+        checksum  Display configuration information cryptochecksum
+        curpriv   Display current privilege level
+        flash:    Display information about flash: file system
+        history   Display the session command history
+        rip       IP RIP show commands
+        sla       Service Level Agreement (SLA)
+        track     Tracking information
+        version   Display system software version
+    """
+    version = oneOfCaseless("version ver")
+    license = oneOfCaseless("license lisence lis lic li")
+    splash = oneOfCaseless("splash splas spla spl")
+    banner = oneOfCaseless("banner ban")
+    copyright = oneOfCaseless("copyright copyr copy cop")
+    history = oneOfCaseless("history hist his")
+
+    def getLegalVerbs(self):
+        """
+        Get all the legal verbs for all the subcommands.
+        """
+        def isVerb(klass):
+            """
+            A member checker that ensures we get verb instances as created by
+            oneOfCaseless.
+            """
+            if isinstance(klass, MatchFirst):
+                return True
+            return False
+        klassData = inspect.getmembers(self, isVerb)
+        return [klass for  klassName, klass in klassData]
+
+
 class ShowCommand(base.BaseCommand):
     """
     Display specific information to the console
@@ -59,6 +101,8 @@ class ShowCommand(base.BaseCommand):
     summary = "Show running system information"
     usage = "%s [command [subcommand]]"
     skipHelp = False
+    legalVerbs = oneOfCaseless("show sho sh")
+    subcommands = ShowSubCommands()
 
     def _doCommand(self, player):
         show = self.tokens.show
@@ -75,6 +119,15 @@ class ShowCommand(base.BaseCommand):
         elif show.startswith('his'):
             util.printHistory()
 
+    def printShortHelp(self):
+        """
+
+        """
+        super(ShowCommand, self).printShortHelp()
+        print "  Sub-commands:"
+        for verb in self.subcommands.getLegalVerbs():
+            print "    %s" % verb.exprs[0].returnString
+
 
 class BaseHelpCommand(base.BaseCommand):
     """
@@ -90,10 +143,18 @@ class ShortHelpCommand(BaseHelpCommand):
     """
     skipHelp = True
     helpTextMethod = "getSummary"
+    legalVerbs = oneOfCaseless("?")
 
     def _doCommand(self, player):
         from openpix.commands import usermode
-        klassData = inspect.getmembers(usermode, inspect.isclass)
+        def isCommandClass(klass):
+            """
+            A check that filters only top-level command classes.
+            """
+            if inspect.isclass(klass) and issubclass(klass, base.BaseCommand):
+                return True
+            return False
+        klassData = inspect.getmembers(usermode, isCommandClass)
         sorted(klassData)
         print
         for klassName, klass in klassData:
@@ -112,6 +173,7 @@ class HelpCommand(base.BaseCommand):
     usage = "%s [command]"
     skipHelp = False
     helpTextMethod = "getDesc"
+    legalVerbs = oneOfCaseless("help h")
 
     def _doCommand(self, player):
         print "not implemented"
@@ -145,6 +207,7 @@ class PingCommand(base.BaseCommand):
         validate    Validate reply data.
         """
     skipHelp = False
+    legalVerbs = oneOfCaseless("ping pi")
 
     def _doCommand(self, player):
         print "not implemented"
@@ -171,6 +234,7 @@ class TracerouteCommand(base.BaseCommand):
         use-icmp    Use ICMP probes instead of UDP probes
         """
     skipHelp = False
+    legalVerbs = oneOfCaseless("traceroute tracert trace trac tra tr")
 
     def _doCommand(self, player):
         print "not implemented"

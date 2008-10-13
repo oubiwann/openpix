@@ -6,6 +6,14 @@ breaking down firewall control into different areas of code.
 * Stubbed out control subpackages.
 * Added a quick reference for commonly used pfctl commands to the pf backend
 stub.
+* Stubbed out a completer class.
+* Updated readline to use the (as yet unfinished) completer and to enable tab
+completion in the shell.
+* Moved verb definitions out of grammar.usermode and into the appropriate
+classes (as class attributes) in commands.usermode.
+* Moved show subcommands into their own class in commands.usermode.
+* Removed unused imports.
+* Added support for displaying subcommands with short help ("?").
 
 2008.10.12
 

@@ -21,6 +21,7 @@ Command Line Completion
  * write attr_matches to use spaces (e.g., subcommands) instead of dots (for
    python modules, etc.)
  * set the readline completer to the overridden complete method 
+ * the implementation of the help system hinges upon this
 
 Command Line History
 --------------------

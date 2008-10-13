@@ -4,8 +4,30 @@ from openpix import util
 from openpix.grammar.parser import Parser
 
 
+class Completer(object):
+    """
+    A class for OpenPIX shell command completion.
+    """
+    def global_matches(self, text):
+        """
+
+        """
+
+    def subcommad_matches(self, text):
+        """
+
+        """
+
+    def complete(self, text, state):
+        """
+
+        """
+
+
 maxHistoryLines = 500
 readline.set_history_length(maxHistoryLines)
+readline.set_completer(Completer().complete)
+readline.parse_and_bind('tab: complete')
 
 
 class User(object):
