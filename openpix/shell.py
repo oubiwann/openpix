@@ -131,6 +131,8 @@ class Shell(object):
                 if auth:
                     self.setMode(mode.privmode)
                     cmd(self.user)
+            elif self.mode == mode.privmode and cmd.tokens.exit:
+                self.setMode(mode.usermode)
             else:
                 cmd(self.user)
 

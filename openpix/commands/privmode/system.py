@@ -16,3 +16,29 @@ class InterfaceCommand(base.BaseCommand):
 
     def _doCommand(self, user):
         print system.call("ifconfig")
+
+
+class QuitCommand(base.BaseCommand):
+    """
+    Disable privileged commands, end configuration mode, or logout
+    """
+    summary = "Exit from the EXEC"
+    usage = "%s"
+    skipHelp = False
+    legalVerbs = oneOfCaseless("quit q exit ex logout logou logo")
+
+    def _doCommand(self, user):
+        print "\nLogoff\n"
+
+
+class ExitCommand(QuitCommand):
+    def __init__(self, *args, **kwds):
+        self.__doc__ = QuitCommand.__doc__
+
+
+class LogoffCommand(QuitCommand):
+    def __init__(self, *args, **kwds):
+        self.__doc__ = QuitCommand.__doc__
+
+
+

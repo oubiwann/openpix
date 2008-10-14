@@ -48,6 +48,11 @@ populated.
 * Added support for the priv interface command.
 * Started moving common grammar code into an appropriately named module.
 * Added interfaces to pertinent files.
+* Added support for a null command (allowing an empty CR).
+* Added support for priv quit (exit from privmode, enter usermode).
+* Moved makeCommandParseAction from parser into common.Grammar.
+* Started moving shared commands out of usermode and into base.
+* Updated TODO.
 
 2008.10.12
 

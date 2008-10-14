@@ -4,11 +4,14 @@ from pyparsing import Optional, Or, LineEnd
 
 from openpix import interfaces
 from openpix.grammar import common
+from openpix.commands import base
 from openpix.commands import usermode
 
 
 shortHelpOption = common.shortHelpOption
 
+# define common command grammars
+nullCommand = common.nullCommand
 
 class UserModeGrammar(common.Grammar):
     """
@@ -48,26 +51,28 @@ class UserModeGrammar(common.Grammar):
             usermode.TracerouteCommand.legalVerbs + shortHelpOption)
 
         # set the parse action
+        nullCommand.setParseAction(
+            self.makeCommandParseAction(base.NullCommand))
         quitCommand.setParseAction(
-            self.parser.makeCommandParseAction(usermode.QuitCommand))
+            self.makeCommandParseAction(usermode.QuitCommand))
         helpCommand.setParseAction(
-            self.parser.makeCommandParseAction(usermode.HelpCommand))
+            self.makeCommandParseAction(usermode.HelpCommand))
         shortHelpCommand.setParseAction(
-            self.parser.makeCommandParseAction(usermode.ShortHelpCommand))
+            self.makeCommandParseAction(usermode.ShortHelpCommand))
         enableCommand.setParseAction(
-            self.parser.makeCommandParseAction(usermode.EnableCommand))
+            self.makeCommandParseAction(usermode.EnableCommand))
         pingCommand.setParseAction(
-            self.parser.makeCommandParseAction(usermode.PingCommand))
+            self.makeCommandParseAction(usermode.PingCommand))
         loginCommand.setParseAction(
-            self.parser.makeCommandParseAction(usermode.LoginCommand))
+            self.makeCommandParseAction(usermode.LoginCommand))
         showCommand.setParseAction(
-            self.parser.makeCommandParseAction(usermode.ShowCommand))
+            self.makeCommandParseAction(usermode.ShowCommand))
         tracerouteCommand.setParseAction(
-            self.parser.makeCommandParseAction(usermode.TracerouteCommand))
+            self.makeCommandParseAction(usermode.TracerouteCommand))
 
         # set the complete grammar
         self.grammar = Or([
-            enableCommand, shortHelpCommand, helpCommand, quitCommand,
+            nullCommand, enableCommand, shortHelpCommand, helpCommand, quitCommand,
             pingCommand, loginCommand, showCommand, tracerouteCommand
             ]).setResultsName("command") + LineEnd()
 

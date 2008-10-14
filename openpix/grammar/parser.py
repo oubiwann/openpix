@@ -20,14 +20,6 @@ class Parser(object):
     def __init__(self, shell):
         self.shell = shell
 
-    def makeCommandParseAction(self, cls):
-        """
-
-        """
-        def cmdParseAction(string, location, tokens):
-            return cls(self, tokens=tokens)
-        return cmdParseAction
-
     def parseCommand(self, command, mode):
         """
 

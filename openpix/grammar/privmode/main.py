@@ -4,11 +4,14 @@ from pyparsing import Optional, Or, LineEnd
 
 from openpix import interfaces
 from openpix.grammar import common
+from openpix.commands import base
 from openpix.commands.privmode import system
 
 
 shortHelpOption = common.shortHelpOption
 
+# define common command grammars
+nullCommand = common.nullCommand
 
 class PrivModeGrammar(common.Grammar):
     """
@@ -28,14 +31,24 @@ class PrivModeGrammar(common.Grammar):
         # define the commdands' grammars
         interfaceCommand = (
             system.InterfaceCommand.legalVerbs + shortHelpOption)
+        quitCommand = (
+            system.QuitCommand.legalVerbs + shortHelpOption
+            ).setResultsName("exit")
+
+        # set the parse action for the common grammars
+        nullCommand.setParseAction(
+            self.makeCommandParseAction(base.NullCommand))
 
         # set the parse action
         interfaceCommand.setParseAction(
-            self.parser.makeCommandParseAction(system.InterfaceCommand))
+            self.makeCommandParseAction(system.InterfaceCommand))
+        quitCommand.setParseAction(
+            self.makeCommandParseAction(system.QuitCommand))
 
         # set the complete grammar
-        self.grammar = Or([interfaceCommand]
-        ).setResultsName("command") + LineEnd()
+        self.grammar = Or([
+            nullCommand, quitCommand, interfaceCommand
+        ]).setResultsName("command") + LineEnd()
 
     def getGrammar(self):
         """

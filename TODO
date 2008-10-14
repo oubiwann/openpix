@@ -1,7 +1,7 @@
 Thought Placeholders
 --------------------
- * DONE - add LICENSE file
- * replace as much of the introspection as possible with interface lookups.
+
+ * IN PROGRESS - replace as much of the introspection as possible with interface lookups.
     - this is needed in order to support composition of subclasses (e.g.,
       ShortHelpCommand(BaseShortHelpCommand) in usermode finding -- and being
       able to pring short help for -- all IUserCommand and IBaseCommand
@@ -9,25 +9,26 @@ Thought Placeholders
       ShortHelpCommand(BaseShortHelpCommand) class is able to display all
       IBaseCommand and IPrivCommand subclasses, but not IUserCommand
       subclasses)
-    - Need the following interfaces:
+    - DONE - Need the following interfaces:
         . IBaseCommand
         . IUserCommand
         . IPrivCommand
         . IConfCommand
-    - class registery instead of inspect? Look at zope.interface/zope.component
- * move commands that are common to both usermode and privmode out of
+    - DONE - class registery instead of inspect? Look at zope.interface/zope.component
+ * IN PROGRESS - move commands that are common to both usermode and privmode out of
    commands.usermode and into commands.common - note that the interface work
    above needs to be done first
+    - show, show sucommands, and help are going to be the trickiest
  * per the TODO in commands.privmode.system, do adaptation for system callers;
    likewise, do somehthine similar for backends
  * command work priority:
     - usermode
         help
-        enable [password]
+        IN PROGRESS - enable [password]
         show flash
     - execmode
         write mem|terminal|net|erase
-        show interface
+        INPROGRESS - show interface
         show ip address
         show memory
         show configuration
@@ -49,6 +50,9 @@ Thought Placeholders
         nat
         global
         route
+ * DONE - add LICENSE file
+ * DONE - move the parser's makeCommandParseAction out of the parser and into the
+   grammar where it belongs
 
 Startup
 -------
@@ -138,3 +142,11 @@ Syslog
 
 Gonna need to support this.
 
+
+Command Pipelining
+------------------
+
+Need to add support for the following:
+ * piping commands from one to the other
+ * grep'ing commands
+ * paging commands

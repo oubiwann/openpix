@@ -1,3 +1,6 @@
+from openpix.util import oneOfCaseless
+
+
 class BaseCommand(object):
     """
     Base class for commands.
@@ -67,6 +70,44 @@ class BaseCommand(object):
             syntax = "SYNTAX:\n%s" % syntax
         return "\nUSAGE:\n%s\nDESCRIPTION:\n%s\n" % (
             self.getUsage(), self.getDesc(), syntax)
+
+
+class NullCommand(BaseCommand):
+    """
+
+    """
+    summary = ""
+    usage = ""
+    skipHelp = True
+    legalVerbs = oneOfCaseless(" ")
+
+    def _doCommand(self, user):
+        pass
+
+
+class QuitCommand(BaseCommand):
+    """
+    Disable privileged commands, end configuration mode, or logout
+    """
+    summary = "Exit from the EXEC"
+    usage = "%s"
+    skipHelp = False
+    legalVerbs = oneOfCaseless("quit q exit ex logout logou logo")
+
+    def _doCommand(self, user):
+        print "\nLogoff\n"
+        user.logout = True
+
+
+class ExitCommand(QuitCommand):
+    def __init__(self, *args, **kwds):
+        self.__doc__ = QuitCommand.__doc__
+
+
+class LogoffCommand(QuitCommand):
+    def __init__(self, *args, **kwds):
+        self.__doc__ = QuitCommand.__doc__
+
 
 class BaseShowCommand(object):
     """
