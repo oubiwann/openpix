@@ -1,7 +1,8 @@
 import readline
 
 from openpix import util
-from openpix import constants
+from openpix import mode
+from openpix import components
 from openpix.system import call as system
 from openpix.grammar.parser import Parser
 
@@ -48,8 +49,15 @@ class Shell(object):
         self.privUser = None
         self.parser = None
         self.prompt = ''
-        self.setMode(constants.usermode)
+        self.setMode(mode.usermode)
         self.setSystem()
+        self.registerComponents()
+
+    def registerComponents(self):
+        """
+
+        """
+        components.register()
 
     def setSystem(self):
         """
@@ -121,7 +129,7 @@ class Shell(object):
                 # XXX
                 auth = True
                 if auth:
-                    self.setMode(constants.privmode)
+                    self.setMode(mode.privmode)
                     cmd(self.user)
             else:
                 cmd(self.user)

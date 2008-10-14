@@ -37,6 +37,17 @@ into grammar.*.get*Grammar functions.
 * Added license.
 * Added a sandbox dir with some example adaptor code that will enable me to get
 rid of the ugly introspection that I was doing.
+* Added additional interfaces.
+* Beefed up the modes module.
+* Replaced a large chunk of introspection code with components and component
+lookup code.
+* Added a component registry that gets loaded when the shell is instantiated so
+that all code that needs to access it will actually find the registery
+populated.
+* Started working on the priv mode grammar.
+* Added support for the priv interface command.
+* Started moving common grammar code into an appropriately named module.
+* Added interfaces to pertinent files.
 
 2008.10.12
 

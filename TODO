@@ -18,6 +18,8 @@ Thought Placeholders
  * move commands that are common to both usermode and privmode out of
    commands.usermode and into commands.common - note that the interface work
    above needs to be done first
+ * per the TODO in commands.privmode.system, do adaptation for system callers;
+   likewise, do somehthine similar for backends
  * command work priority:
     - usermode
         help

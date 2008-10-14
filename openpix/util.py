@@ -13,7 +13,6 @@ from twisted.internet import ssl
 import openpix
 from openpix import art
 from openpix import meta
-from openpix.constants import defaultPrompt
 
 
 dividerSegment = "_" * 34

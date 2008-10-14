@@ -1,26 +1,32 @@
+from zope import component
+
 from pyparsing import Optional, Or, LineEnd
 
+from openpix import interfaces
+from openpix.grammar import common
 from openpix.commands import usermode
 
 
-shortHelpOption = Optional(
-    usermode.ShortHelpCommand.legalVerbs
-    ).setResultsName('shortHelp')
+shortHelpOption = common.shortHelpOption
 
 
-class Grammar(object):
+class UserModeGrammar(common.Grammar):
     """
 
     """
-    def __init__(self, parser):
+    component.adapts(interfaces.IParser, interfaces.IUserMode)
+
+    def __init__(self, parser, mode):
         self.parser = parser
+        self.mode = mode
+        self.grammar = None
+        self.buildGrammar()
 
-    def getGrammar(self):
+    def buildGrammar(self):
         """
-        User EXEC mode lets you see minimum security appliance settings. The
-        user EXEC mode prompt appears when you first access the security
-        appliance.
+
         """
+        # define the commdands' grammars
         enableCommand = (
             usermode.EnableCommand.legalVerbs + shortHelpOption
             ).setResultsName('privMode')
@@ -41,26 +47,37 @@ class Grammar(object):
         tracerouteCommand = (
             usermode.TracerouteCommand.legalVerbs + shortHelpOption)
 
+        # set the parse action
         quitCommand.setParseAction(
-            parser.makeCommandParseAction(usermode.QuitCommand))
+            self.parser.makeCommandParseAction(usermode.QuitCommand))
         helpCommand.setParseAction(
-            parser.makeCommandParseAction(usermode.HelpCommand))
+            self.parser.makeCommandParseAction(usermode.HelpCommand))
         shortHelpCommand.setParseAction(
-            parser.makeCommandParseAction(usermode.ShortHelpCommand))
+            self.parser.makeCommandParseAction(usermode.ShortHelpCommand))
         enableCommand.setParseAction(
-            parser.makeCommandParseAction(usermode.EnableCommand))
+            self.parser.makeCommandParseAction(usermode.EnableCommand))
         pingCommand.setParseAction(
-            parser.makeCommandParseAction(usermode.PingCommand))
+            self.parser.makeCommandParseAction(usermode.PingCommand))
         loginCommand.setParseAction(
-            parser.makeCommandParseAction(usermode.LoginCommand))
+            self.parser.makeCommandParseAction(usermode.LoginCommand))
         showCommand.setParseAction(
-            parser.makeCommandParseAction(usermode.ShowCommand))
+            self.parser.makeCommandParseAction(usermode.ShowCommand))
         tracerouteCommand.setParseAction(
-            parser.makeCommandParseAction(usermode.TracerouteCommand))
+            self.parser.makeCommandParseAction(usermode.TracerouteCommand))
 
-        return Or([
+        # set the complete grammar
+        self.grammar = Or([
             enableCommand, shortHelpCommand, helpCommand, quitCommand,
             pingCommand, loginCommand, showCommand, tracerouteCommand
             ]).setResultsName("command") + LineEnd()
+
+    def getGrammar(self):
+        """
+        User EXEC mode lets you see minimum security appliance settings. The
+        user EXEC mode prompt appears when you first access the security
+        appliance.
+        """
+        return self.grammar
+
 
 
