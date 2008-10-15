@@ -19,8 +19,9 @@ Thought Placeholders
    commands.usermode and into commands.common - note that the interface work
    above needs to be done first
     - show, show sucommands, and help are going to be the trickiest
- * per the TODO in commands.privmode.system, do adaptation for system callers;
-   likewise, do somehthine similar for backends
+ * per the TODO in commands.privmode.system:
+    - WON'T FIX (not needed; the shell sets the system) do adaptation for system callers
+    - do somehthine similar for backends
  * command work priority:
     - usermode
         help

@@ -3,3 +3,5 @@ Dependencies
 ============
 
 Pyparsing
+zope.interface
+zope.component

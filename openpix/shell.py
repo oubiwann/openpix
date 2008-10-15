@@ -68,8 +68,8 @@ class Shell(object):
         systemName = system.call("uname")
         if systemName == system.linux.System.uname:
             self.system = system.linux.System()
-        elif systemName == system.bsd.System.uname:
-            self.system = system.bsd.System()
+        elif systemName == system.openbsd.System.uname:
+            self.system = system.openbsd.System()
         elif systemName == system.darwin.System.uname:
             self.system = system.darwin.System()
 

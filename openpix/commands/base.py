@@ -12,6 +12,7 @@ class BaseCommand(object):
 
     def __init__(self, parser, tokens=[]):
         self.parser = parser
+        self.system = self.parser.shell.getSystem()
         self.tokens = tokens
 
     def __call__(self, user):

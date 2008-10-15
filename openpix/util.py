@@ -7,9 +7,6 @@ from datetime import datetime
 
 from pyparsing import oneOf
 
-from twisted.python import log
-from twisted.internet import ssl
-
 import openpix
 from openpix import art
 from openpix import meta

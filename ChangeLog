@@ -1,3 +1,14 @@
+2008.10.14
+
+* Updated DEPENDENCIES to include zope.interface and zope.component.
+* Updated shell script to use a relative path.
+* Removed useless Twisted imports in util.
+* Renamed system.call.bsd to system.call.openbsd.
+* Created system.call.common.System and added getInterface method.
+* Set system.call.*.System to be subclasses of system.call.common.System.
+* Changed the Interface command to call getInterface on the parser's shell's
+system.
+
 2008.10.13
 
 * Updated the TODO with a strategy for implementing command completion in
