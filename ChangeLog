@@ -1,3 +1,9 @@
+2008.10.18
+
+* Renamed backends to backend.
+* Added a setBackend method to Shell.
+* Minimal update to backend.pf.
+
 2008.10.14
 
 * Updated DEPENDENCIES to include zope.interface and zope.component.

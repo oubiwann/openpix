@@ -3,6 +3,7 @@ import readline
 from openpix import util
 from openpix import mode
 from openpix import components
+from openpix.system import backend
 from openpix.system import call as system
 from openpix.grammar.parser import Parser
 
@@ -65,20 +66,40 @@ class Shell(object):
         appropriate module, instantiate the System object, and set it on the
         shell.
         """
-        systemName = system.call("uname")
-        if systemName == system.linux.System.uname:
+        name = system.call("uname")
+        if name == system.linux.System.uname:
             self.system = system.linux.System()
-        elif systemName == system.openbsd.System.uname:
+        elif name == system.openbsd.System.uname:
             self.system = system.openbsd.System()
-        elif systemName == system.darwin.System.uname:
+        elif name == system.darwin.System.uname:
             self.system = system.darwin.System()
-
 
     def getSystem(self):
         """
 
         """
         return self.system
+
+    def setBackend(self, name="pf"):
+        """
+
+        """
+        if name == backend.pf.shortName:
+            self.backend = backend.pf
+        elif name == backend.iptables.shortName:
+            self.backend = backend.iptables
+        elif name == backend.ipf.shortName:
+            self.backend = backend.ipf
+        elif name == backend.ipfw.shortName:
+            self.backend = backend.ipfw
+        elif name == backend.ipchains.shortName:
+            self.backend = backend.ipchains
+
+    def getBackend(self):
+        """
+
+        """
+        return self.backend
 
     def setUser(self, user):
         """
@@ -92,12 +113,6 @@ class Shell(object):
         the mode prompt.
         """
         self.mode = mode
-
-    def getBackend(self):
-        """
-
-        """
-        return self.backend
 
     def setUpCompletion(self):
         # XXX get max lines from config
