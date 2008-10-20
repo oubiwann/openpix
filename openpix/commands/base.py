@@ -8,6 +8,9 @@ from openpix import interfaces
 from openpix.util import oneOfCaseless
 
 
+commandClasses = {}
+
+
 def getCommandClasses(mode=None):
     from openpix import commands
 
@@ -25,6 +28,9 @@ def getCommandClasses(mode=None):
             return True
         return False
 
+    classes = commandClasses.get(mode)
+    if mode and classes:
+        return classes
     modules = getModules(commands)
     modules.extend(getModules(commands.privmode))
     commands = []
@@ -34,6 +40,7 @@ def getCommandClasses(mode=None):
     if mode:
         commands = [x for x in commands
                     if mode.commandInterface.implementedBy(x[1])]
+        commandClasses[mode] = commands
     return commands
 
 

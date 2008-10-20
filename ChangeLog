@@ -9,6 +9,7 @@ able to query more easily.
 * Created a new command list builder and changed ShortHelpCommand to use it.
 * Updated TODO with a note about where to pickup next with shell command
 completion.
+* Added caching for command classes.
 
 2008.10.19
 
