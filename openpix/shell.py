@@ -6,29 +6,60 @@ from openpix import components
 from openpix.system import backend
 from openpix.system import call as system
 from openpix.grammar.parser import Parser
+from openpix.commands.base import getCommandClasses
 
 
 class Completer(object):
     """
     A class for OpenPIX shell command completion.
     """
-    def __init__(self, mode):
-        self.mode = mode
+    def __init__(self, shell):
+        self.shell = shell
+        self.commands = []
+        self.matches = []
+        self.ignore = set(['shorthelp'])
 
-    def global_matches(self, text):
+    def getCommandNames(self):
         """
 
         """
+        commandData  = getCommandClasses(self.shell.mode)
+        if self.commands:
+            return self.commands
+        commands = [klass(self.shell.parser).getCommandName() for name, klass
+                    in commandData]
+        self.commands = sorted(list(
+            self.ignore.symmetric_difference(commands)))
+        return self.commands
 
-    def subcommad_matches(self, text):
+    def getGlobalMatches(self, text):
+        """
+
+        """
+        matches = []
+        for command in self.getCommandNames():
+            if command[:len(text)] == text:
+                matches.append(command)
+        return matches
+
+    def getSubcommadMatches(self, text):
         """
 
         """
 
     def complete(self, text, state):
         """
-
+        Return the next possible completion for 'text'.
         """
+        if state == 0:
+            if " " in text:
+                self.matches = self.getSubcommandMatches(text)
+            else:
+                self.matches = self.getGlobalMatches(text)
+        try:
+            return self.matches[state]
+        except IndexError:
+            return None
 
 
 
@@ -121,7 +152,7 @@ class Shell(object):
         # XXX get max lines from config
         maxHistoryLines = 500
         readline.set_history_length(maxHistoryLines)
-        readline.set_completer(Completer(mode).complete)
+        readline.set_completer(Completer(self).complete)
         readline.parse_and_bind('tab: complete')
 
     def getMode(self):

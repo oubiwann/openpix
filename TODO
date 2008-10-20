@@ -1,7 +1,8 @@
 Thought Placeholders
 --------------------
- * Fill in the shell completion code to use the new command list builder to get
+ * DONE - Fill in the shell completion code to use the new command list builder to get
    global commands.
+ * Add support for subcommands
 
  * command work priority:
     - usermode

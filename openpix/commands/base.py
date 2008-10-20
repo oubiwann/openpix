@@ -5,6 +5,7 @@ from zope.interface import implements
 from pyparsing import MatchFirst
 
 from openpix import interfaces
+from openpix import util
 from openpix.util import oneOfCaseless
 
 

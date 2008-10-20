@@ -10,6 +10,7 @@ able to query more easily.
 * Updated TODO with a note about where to pickup next with shell command
 completion.
 * Added caching for command classes.
+* Added code for global command completion.
 
 2008.10.19
 
