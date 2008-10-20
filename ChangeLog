@@ -1,3 +1,15 @@
+2008.10.20
+
+* Moved getGrammar into common.
+* Added a grammar caching mechanism to the parser.
+* Fixed the mode's hash function to actually make sense.
+* Replaced default zope component registry with custom registry that we will be
+able to query more easily.
+* Updated the Completer to take the mode in its constructor.
+* Created a new command list builder and changed ShortHelpCommand to use it.
+* Updated TODO with a note about where to pickup next with shell command
+completion.
+
 2008.10.19
 
 * Started updating commands to use interfaces.

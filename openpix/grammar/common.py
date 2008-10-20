@@ -23,6 +23,7 @@ class Grammar(object):
     def __init__(self, parser, mode):
         self.parser = parser
         self.mode = mode
+        self.grammar = None
 
     def makeCommandParseAction(self, klass):
         """
@@ -32,4 +33,12 @@ class Grammar(object):
         def commandParseAction(string, location, tokens):
             return klass(self.parser, tokens=tokens)
         return commandParseAction
+
+
+    def getGrammar(self):
+        """
+
+        """
+        return self.grammar
+
 

@@ -1,27 +1,8 @@
 Thought Placeholders
 --------------------
+ * Fill in the shell completion code to use the new command list builder to get
+   global commands.
 
- * IN PROGRESS - replace as much of the introspection as possible with interface lookups.
-    - this is needed in order to support composition of subclasses (e.g.,
-      ShortHelpCommand(BaseShortHelpCommand) in usermode finding -- and being
-      able to pring short help for -- all IUserCommand and IBaseCommand
-      instances, while at the same time privmode's
-      ShortHelpCommand(BaseShortHelpCommand) class is able to display all
-      IBaseCommand and IPrivCommand subclasses, but not IUserCommand
-      subclasses)
-    - DONE - Need the following interfaces:
-        . IBaseCommand
-        . IUserCommand
-        . IPrivCommand
-        . IConfCommand
-    - DONE - class registery instead of inspect? Look at zope.interface/zope.component
- * IN PROGRESS - move commands that are common to both usermode and privmode out of
-   commands.usermode and into commands.common - note that the interface work
-   above needs to be done first
-    - show, show sucommands, and help are going to be the trickiest
- * DONE - per the TODO in commands.privmode.system:
-    - WON'T FIX (not needed; the shell sets the system) do adaptation for system callers
-    - WON'T FIX (not needed; the shell sets this up too) do something similar for backends
  * command work priority:
     - usermode
         help
@@ -54,6 +35,27 @@ Thought Placeholders
  * DONE - add LICENSE file
  * DONE - move the parser's makeCommandParseAction out of the parser and into the
    grammar where it belongs
+ * DONE - replace as much of the introspection as possible with interface lookups.
+    - this is needed in order to support composition of subclasses (e.g.,
+      ShortHelpCommand(BaseShortHelpCommand) in usermode finding -- and being
+      able to pring short help for -- all IUserCommand and IBaseCommand
+      instances, while at the same time privmode's
+      ShortHelpCommand(BaseShortHelpCommand) class is able to display all
+      IBaseCommand and IPrivCommand subclasses, but not IUserCommand
+      subclasses)
+    - DONE - Need the following interfaces:
+        . IBaseCommand
+        . IUserCommand
+        . IPrivCommand
+        . IConfCommand
+    - DONE - class registery instead of inspect? Look at zope.interface/zope.component
+ * DONE - move commands that are common to both usermode and privmode out of
+   commands.usermode and into commands.common - note that the interface work
+   above needs to be done first
+    - show, show sucommands, and help are going to be the trickiest
+ * DONE - per the TODO in commands.privmode.system:
+    - WON'T FIX (not needed; the shell sets the system) do adaptation for system callers
+    - WON'T FIX (not needed; the shell sets this up too) do something similar for backends
 
 Startup
 -------

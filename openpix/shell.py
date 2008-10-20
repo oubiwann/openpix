@@ -12,6 +12,9 @@ class Completer(object):
     """
     A class for OpenPIX shell command completion.
     """
+    def __init__(self, mode):
+        self.mode = mode
+
     def global_matches(self, text):
         """
 
@@ -118,7 +121,7 @@ class Shell(object):
         # XXX get max lines from config
         maxHistoryLines = 500
         readline.set_history_length(maxHistoryLines)
-        readline.set_completer(Completer().complete)
+        readline.set_completer(Completer(mode).complete)
         readline.parse_and_bind('tab: complete')
 
     def getMode(self):

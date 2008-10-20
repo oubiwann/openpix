@@ -15,7 +15,8 @@ nullCommand = common.nullCommand
 
 class PrivModeGrammar(common.Grammar):
     """
-
+    Priv EXEC mode lets you see all appliance settings as well as enter
+    into configuration mode where these settings may be changed.
     """
     component.adapts(interfaces.IParser, interfaces.IPrivMode)
 
@@ -50,11 +51,5 @@ class PrivModeGrammar(common.Grammar):
             nullCommand, quitCommand, interfaceCommand
         ]).setResultsName("command") + LineEnd()
 
-    def getGrammar(self):
-        """
-        Priv EXEC mode lets you see all appliance settings as well as enter
-        into configuration mode where these settings may be changed.
-        """
-        return self.grammar
 
 

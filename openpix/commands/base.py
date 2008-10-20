@@ -8,6 +8,35 @@ from openpix import interfaces
 from openpix.util import oneOfCaseless
 
 
+def getCommandClasses(mode=None):
+    from openpix import commands
+
+    def getModules(subpackage):
+        """
+        Get all the modules in a given subpackage.
+        """
+        return [x[1] for x in inspect.getmembers(subpackage, inspect.ismodule)]
+
+    def isCommandClass(klass):
+        """
+        A check that filters only top-level command classes.
+        """
+        if inspect.isclass(klass) and issubclass(klass, BaseCommand):
+            return True
+        return False
+
+    modules = getModules(commands)
+    modules.extend(getModules(commands.privmode))
+    commands = []
+    for module in modules:
+        commands.extend(
+            [x for x in inspect.getmembers(module, isCommandClass)])
+    if mode:
+        commands = [x for x in commands
+                    if mode.commandInterface.implementedBy(x[1])]
+    return commands
+
+
 class BaseCommand(object):
     """
     Base class for commands.
@@ -21,6 +50,7 @@ class BaseCommand(object):
     def __init__(self, parser, tokens=[]):
         self.parser = parser
         self.system = self.parser.shell.getSystem()
+        self.mode = self.parser.shell.getMode()
         self.tokens = tokens
 
     def __call__(self, user):
@@ -173,7 +203,7 @@ class ShowCommand(BaseCommand):
         print "  Sub-commands:"
         for verb in self.subcommands.getLegalVerbs():
             print "    %s" % verb.exprs[0].returnString
-        print 
+        print
 
     def printShortHelp(self):
         """
@@ -201,18 +231,8 @@ class ShortHelpCommand(BaseHelpCommand):
     legalVerbs = oneOfCaseless("?")
 
     def _doCommand(self, user):
-        from openpix.commands import usermode
-        def isCommandClass(klass):
-            """
-            A check that filters only top-level command classes.
-            """
-            if inspect.isclass(klass) and issubclass(klass, BaseCommand):
-                return True
-            return False
-        klassData = inspect.getmembers(usermode, isCommandClass)
-        sorted(klassData)
         print
-        for klassName, klass in klassData:
+        for klassName, klass in sorted(getCommandClasses(self.mode)):
             if klass.skipHelp:
                 continue
             obj = klass(self.parser)

@@ -15,7 +15,9 @@ nullCommand = common.nullCommand
 
 class UserModeGrammar(common.Grammar):
     """
-
+    User EXEC mode lets you see minimum security appliance settings. The
+    user EXEC mode prompt appears when you first access the security
+    appliance.
     """
     component.adapts(interfaces.IParser, interfaces.IUserMode)
 
@@ -77,12 +79,7 @@ class UserModeGrammar(common.Grammar):
             tracerouteCommand
             ]).setResultsName("command") + LineEnd()
 
-    def getGrammar(self):
-        """
-        User EXEC mode lets you see minimum security appliance settings. The
-        user EXEC mode prompt appears when you first access the security
-        appliance.
-        """
-        return self.grammar
+
+
 
 

@@ -15,9 +15,10 @@ class Mode(object):
     A simple object for creating object hierarchies.
     """
     implements(interfaces.IMode)
+    commandInterface = interfaces.ICommand
 
     def __hash__(self):
-        return hash(self.__dict__)
+        return hash(self.__class__.__name__)
 
 
 class UserMode(Mode):
@@ -25,6 +26,12 @@ class UserMode(Mode):
 
     """
     implements(interfaces.IUserMode)
+    name = "user"
+    username = "enable_1"
+    level = 1
+    modes = ["P_UNPR"]
+    prompt = defaultPrompt
+    commandInterface = interfaces.IUserCommand
 
 
 class PrivMode(Mode):
@@ -32,6 +39,12 @@ class PrivMode(Mode):
 
     """
     implements(interfaces.IPrivMode)
+    name = "priv"
+    username = "enable_15"
+    modes = ["P_PRIV"]
+    level = 15
+    prompt = rootPrompt
+    commandInterface = interfaces.IPrivCommand
 
 
 class ConfigMode(Mode):
@@ -39,25 +52,17 @@ class ConfigMode(Mode):
 
     """
     implements(interfaces.IConfigMode)
+    name = "config"
+    username = "enable_15"
+    level = 15
+    modes = ["P_PRIV", "P_CONF"]
+    prompt = None
+    commandInterface = None
 
 
 usermode = UserMode()
-usermode.name = "user"
-usermode.username = "enable_1"
-usermode.level = 1
-usermode.modes = ["P_UNPR"]
-usermode.prompt = defaultPrompt
 
 privmode = PrivMode()
-privmode.name = "priv"
-privmode.username = "enable_15"
-privmode.level = 15
-privmode.modes = ["P_PRIV"]
-privmode.prompt = rootPrompt
 
 configmode = ConfigMode()
-configmode.name = "config"
-configmode.username = "enable_15"
-configmode.level = 15
-configmode.modes = ["P_PRIV", "P_CONF"]
 
