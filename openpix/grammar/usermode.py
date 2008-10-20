@@ -37,18 +37,18 @@ class UserModeGrammar(common.Grammar):
         quitCommand = usermode.QuitCommand.legalVerbs + shortHelpOption
 
         showOptions = Optional(
-            Or(usermode.ShowSubCommands().getLegalVerbs())
+            Or(base.ShowSubCommands().getLegalVerbs())
             ).setResultsName('show')
         showCommand = (
-            usermode.ShowCommand.legalVerbs + showOptions + shortHelpOption)
+            base.ShowCommand.legalVerbs + showOptions + shortHelpOption)
 
         shortHelpCommand = (
-            usermode.ShortHelpCommand.legalVerbs + shortHelpOption)
-        helpCommand = usermode.HelpCommand.legalVerbs + shortHelpOption
+            base.ShortHelpCommand.legalVerbs + shortHelpOption)
+        helpCommand = base.HelpCommand.legalVerbs + shortHelpOption
 
-        pingCommand = usermode.PingCommand.legalVerbs + shortHelpOption
+        pingCommand = base.PingCommand.legalVerbs + shortHelpOption
         tracerouteCommand = (
-            usermode.TracerouteCommand.legalVerbs + shortHelpOption)
+            base.TracerouteCommand.legalVerbs + shortHelpOption)
 
         # set the parse action
         nullCommand.setParseAction(
@@ -56,24 +56,25 @@ class UserModeGrammar(common.Grammar):
         quitCommand.setParseAction(
             self.makeCommandParseAction(usermode.QuitCommand))
         helpCommand.setParseAction(
-            self.makeCommandParseAction(usermode.HelpCommand))
+            self.makeCommandParseAction(base.HelpCommand))
         shortHelpCommand.setParseAction(
-            self.makeCommandParseAction(usermode.ShortHelpCommand))
+            self.makeCommandParseAction(base.ShortHelpCommand))
         enableCommand.setParseAction(
             self.makeCommandParseAction(usermode.EnableCommand))
         pingCommand.setParseAction(
-            self.makeCommandParseAction(usermode.PingCommand))
+            self.makeCommandParseAction(base.PingCommand))
         loginCommand.setParseAction(
             self.makeCommandParseAction(usermode.LoginCommand))
         showCommand.setParseAction(
-            self.makeCommandParseAction(usermode.ShowCommand))
+            self.makeCommandParseAction(base.ShowCommand))
         tracerouteCommand.setParseAction(
-            self.makeCommandParseAction(usermode.TracerouteCommand))
+            self.makeCommandParseAction(base.TracerouteCommand))
 
         # set the complete grammar
         self.grammar = Or([
-            nullCommand, enableCommand, shortHelpCommand, helpCommand, quitCommand,
-            pingCommand, loginCommand, showCommand, tracerouteCommand
+            nullCommand, enableCommand, shortHelpCommand, helpCommand,
+            quitCommand, pingCommand, loginCommand, showCommand,
+            tracerouteCommand
             ]).setResultsName("command") + LineEnd()
 
     def getGrammar(self):
@@ -83,6 +84,5 @@ class UserModeGrammar(common.Grammar):
         appliance.
         """
         return self.grammar
-
 
 

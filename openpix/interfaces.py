@@ -54,7 +54,7 @@ class IUserCommand(ICommand):
     """
 
 
-class IPriveCommand(ICommand):
+class IPrivCommand(ICommand):
     """
 
     """

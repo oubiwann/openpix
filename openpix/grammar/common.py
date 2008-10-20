@@ -10,9 +10,7 @@ from openpix.commands import usermode
 
 
 shortHelpOption = Optional(
-    usermode.ShortHelpCommand.legalVerbs).setResultsName('shortHelp')
-
-quitCommand = base.QuitCommand.legalVerbs + shortHelpOption
+    base.ShortHelpCommand.legalVerbs).setResultsName('shortHelp')
 
 nullCommand = Optional(empty)
 

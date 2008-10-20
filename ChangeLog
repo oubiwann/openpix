@@ -1,3 +1,11 @@
+2008.10.19
+
+* Started updating commands to use interfaces.
+* Fixed typo in interface.
+* Moved ping and traceroute command out of usermode and into base, so they can
+be shared.
+* Did the same for show and help classes.
+
 2008.10.18
 
 * Renamed backends to backend.
@@ -14,6 +22,9 @@
 * Set system.call.*.System to be subclasses of system.call.common.System.
 * Changed the Interface command to call getInterface on the parser's shell's
 system.
+* Added a shell script to sync source code to the firewall for development
+purposes.
+* Updated the shell script to use a standard directory as the python path.
 
 2008.10.13
 

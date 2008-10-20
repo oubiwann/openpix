@@ -1,11 +1,15 @@
+from zope.interface import implements
+
 from openpix.commands import base
 from openpix.util import oneOfCaseless
+from openpix.interfaces import IPrivCommand
 
 
 class InterfaceCommand(base.BaseCommand):
     """
 
     """
+    implements(IPrivCommand)
     summary = ""
     usage = ""
     skipHelp = False
@@ -19,6 +23,7 @@ class QuitCommand(base.BaseCommand):
     """
     Disable privileged commands, end configuration mode, or logout
     """
+    implements(IPrivCommand)
     summary = "Exit from the EXEC"
     usage = "%s"
     skipHelp = False
