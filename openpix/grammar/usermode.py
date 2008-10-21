@@ -12,6 +12,7 @@ shortHelpOption = common.shortHelpOption
 
 # define common command grammars
 nullCommand = common.nullCommand
+helpCommand = common.helpCommand
 
 class UserModeGrammar(common.Grammar):
     """
@@ -46,7 +47,6 @@ class UserModeGrammar(common.Grammar):
 
         shortHelpCommand = (
             base.ShortHelpCommand.legalVerbs + shortHelpOption)
-        helpCommand = base.HelpCommand.legalVerbs + shortHelpOption
 
         pingCommand = base.PingCommand.legalVerbs + shortHelpOption
         tracerouteCommand = (

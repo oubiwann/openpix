@@ -325,7 +325,7 @@ class HelpCommand(BaseCommand):
     legalVerbs = oneOfCaseless("help h")
 
     def _doCommand(self, user):
-        print "not implemented"
+        print self.getHelp()
 
 
 class PingCommand(BaseCommand):

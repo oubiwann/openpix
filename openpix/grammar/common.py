@@ -8,11 +8,14 @@ from openpix import interfaces
 from openpix.commands import base
 from openpix.commands import usermode
 
-
+# XXX
+allCommands = empty
 shortHelpOption = Optional(
     base.ShortHelpCommand.legalVerbs).setResultsName('shortHelp')
-
 nullCommand = Optional(empty)
+helpCommand = (base.HelpCommand.legalVerbs + Optional(allCommands) +
+               shortHelpOption)
+
 
 class Grammar(object):
     """

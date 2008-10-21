@@ -1,6 +1,17 @@
 Thought Placeholders
 --------------------
  * Next up: help
+ * Finish with show subcommands
+ * Add completer for 'help' command
+ * Revamp commands
+    - renmae to "command"
+    - move common commands out of base and into common
+    - don't stomp on other modules named "common"
+        . in commands.__init__, from common import *
+        . in othe modules, from openpix import command, command.CommandName
+        . make similar changes for openpix.grammar.common:
+            from openpix import grammar, grammar.GrammarName
+
  * command work priority:
     - usermode
         help

@@ -10,6 +10,13 @@
 objects.
 * Added a compare function to BaseCommand so that commands would sort properly.
 * Removed commented-out debug trace.
+* Updated completer doc with some notes and TODOs.
+* Moved help grammar into common.
+* Moved old reference code into sandbox.
+* Moved command methods out of Completer and into the shell (because the
+getCommand* methods are generally useful to other parts of the application,
+speficially, the help command).
+* Cleaned up the complete method.
 
 2008.10.20
 

@@ -12,51 +12,25 @@ from openpix.commands.base import getCommandClasses, getClassesWithSubcommands
 class Completer(object):
     """
     A class for OpenPIX shell command completion.
+
+    Completer's are a bit tricky because there doesn't seem to be too much
+    clear and detailed documentation on them.
+
+    XXX - add notes about state and text
+    XXX - add notes about the completer methods in this class
+    XXX - add notes about the subcommand method
+    XXX - add notes about helper methods in this class
     """
     def __init__(self, shell):
         self.shell = shell
-        self.commands = []
         self.matches = []
-        self.ignore = ['shorthelp']
-
-    def getCommands(self):
-        """
-
-        """
-        if self.commands:
-            return self.commands
-        commandData  = getCommandClasses(self.shell.mode)
-        commands = [klass(self.shell.parser)
-                    for name, klass in commandData]
-        commands.sort()
-        self.commands = [x for x in commands
-                         if x.getCommandName() not in self.ignore]
-        return self.commands
-
-    def getCommandNames(self):
-        """
-
-        """
-        return [x.getCommandName() for x in self.getCommands()]
-
-    def getCommandNamesWithSubCommands(self):
-        """
-
-        """
-        return [x.getCommandName() for x in self.getCommands()
-                if hasattr(x, 'subcommands')]
-
-    def getCommand(self, name):
-        for command in self.getCommands():
-            if command.getCommandName() == name:
-                return command
 
     def getGlobalMatches(self, text):
         """
 
         """
         matches = []
-        for commandName in self.getCommandNames():
+        for commandName in self.shell.getCommandNames():
             if commandName[:len(text)] == text:
                 matches.append(commandName)
         return matches
@@ -67,7 +41,7 @@ class Completer(object):
         """
         matches = []
         subCommandNames = []
-        command = self.getCommand(commandName)
+        command = self.shell.getCommand(commandName)
         for subCommandVerb in [x[0] for x in command.subcommands.getLegalVerbs()]:
             subCommandName = subCommandVerb.returnString
             if subCommandName[:len(text)] == text:
@@ -83,14 +57,19 @@ class Completer(object):
     def complete(self, text, state):
         """
         Return the next possible completion for 'text'.
+
+        Note that subcommands take the following form, and are parsed as such:
+            prompt> command [subcommand]
+
+        And that help commands take this form:
+            prompt> help command
         """
-        buffer = readline.get_line_buffer()
-        subCheck = buffer.split(" ")
+        subCheck = readline.get_line_buffer().split(" ")
         if state == 0:
             if len(subCheck) > 1:
                 commandName = subCheck[0]
                 subCommandName = subCheck[1]
-                if commandName in self.getCommandNamesWithSubCommands():
+                if commandName in self.shell.getCommandNamesWithSubCommands():
                     self.matches = self.getSubCommandMatches(commandName, text)
             else:
                 self.matches = self.getGlobalMatches(text)
@@ -124,6 +103,8 @@ class Shell(object):
         self.setMode(mode.usermode)
         self.setSystem()
         self.registerComponents()
+        self._command_cache = []
+        self._listing_ignore = ["shorthelp"]
 
     def registerComponents(self):
         """
@@ -190,13 +171,48 @@ class Shell(object):
         maxHistoryLines = 500
         readline.set_history_length(maxHistoryLines)
         readline.set_completer(Completer(self).complete)
-        readline.parse_and_bind('tab: complete')
+        readline.parse_and_bind("tab: complete")
 
     def getMode(self):
         """
 
         """
         return self.mode
+
+    def getCommands(self):
+        """
+
+        """
+        if self._command_cache:
+            return self._command_cache
+        commandData  = getCommandClasses(self.mode)
+        commands = [klass(self.parser)
+                    for name, klass in commandData]
+        commands.sort()
+        self._command_cache = [x for x in commands
+                         if x.getCommandName() not in self._listing_ignore]
+        return self._command_cache
+
+    def getCommandNames(self):
+        """
+
+        """
+        return [x.getCommandName() for x in self.getCommands()]
+
+    def getCommandNamesWithSubCommands(self):
+        """
+        Get the list of commands (in openpix.command) that have subcommands.
+        """
+        return [x.getCommandName() for x in self.getCommands()
+                if hasattr(x, "subcommands")]
+
+    def getCommand(self, name):
+        """
+
+        """
+        for command in self.getCommands():
+            if command.getCommandName() == name:
+                return command
 
     def processResults(self, parseResults):
         """
@@ -232,6 +248,7 @@ class Shell(object):
         self.setUpCompletion()
         # create parser
         self.parser = Parser(self)
+        #import pdb;pdb.set_trace()
 
     def run(self):
         while not self.user.logout:
