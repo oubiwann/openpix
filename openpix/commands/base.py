@@ -10,26 +10,46 @@ from openpix.util import oneOfCaseless
 
 
 commandClasses = {}
+subcCommandClasses = {}
 
 
-def getCommandClasses(mode=None):
+def getModules(subpackage):
+    """
+    Get all the modules in a given subpackage.
+    """
+    return [x[1] for x in inspect.getmembers(subpackage, inspect.ismodule)]
+
+
+def isCommandClass(klass):
+    """
+    A check that filters only top-level command classes.
+    """
+    if inspect.isclass(klass) and issubclass(klass, BaseCommand):
+        return True
+    return False
+
+
+def isSubCommandClass(klass):
+    """
+    A check that filters second-level commands.
+    """
+    if inspect.isclass(klass) and issubclass(klass, BaseSubCommand):
+        return True
+    return False
+
+
+def getClasses(data, mode=None, filter=isCommandClass):
+    """
+    Like inspect.getmembers, returuns a list of (class name, class) tuples.
+
+    The 'data' parameter is for caching; the mode is used to determine which
+    command-level to check for commands (e.g., user-mode, priv-mode, etc.), and
+    the 'filter' parameter is used to get only command classes or only
+    sub-command classes, etc.
+    """
     from openpix import commands
 
-    def getModules(subpackage):
-        """
-        Get all the modules in a given subpackage.
-        """
-        return [x[1] for x in inspect.getmembers(subpackage, inspect.ismodule)]
-
-    def isCommandClass(klass):
-        """
-        A check that filters only top-level command classes.
-        """
-        if inspect.isclass(klass) and issubclass(klass, BaseCommand):
-            return True
-        return False
-
-    classes = commandClasses.get(mode)
+    classes = data.get(mode)
     if mode and classes:
         return classes
     modules = getModules(commands)
@@ -41,8 +61,31 @@ def getCommandClasses(mode=None):
     if mode:
         commands = [x for x in commands
                     if mode.commandInterface.implementedBy(x[1])]
-        commandClasses[mode] = commands
+        data[mode] = commands
     return commands
+
+
+def getCommandClasses(mode=None):
+    """
+    Like inspect.getmembers, returuns a list of (class name, class) tuples.
+    
+    """
+    return getClasses(commandClasses, mode, isCommandClass)
+
+
+def getSubCommandClasses(mode=None):
+    """
+    Like inspect.getmembers, returuns a list of (class name, class) tuples.
+    """
+    return getClasses(subCommandClasses, mode, isSubCommandClass)
+
+
+def getClassesWithSubcommands(mode=None):
+    """
+
+    """
+    return [(name, klass) for name, klass in getCommandClasses(mode)
+            if hasattr(klass, 'subcommands')]
 
 
 class BaseCommand(object):
@@ -63,6 +106,17 @@ class BaseCommand(object):
 
     def __call__(self, user):
         self._doCommand(user)
+
+    def __cmp___(self, other):
+        """
+
+        """
+        x, y = (self.getCommandName(), other.getCommandName())
+        if x > y:
+            return 1
+        elif x == y:
+            return 0
+        return -1
 
     def _doCommand(self, user):
         """
@@ -118,6 +172,12 @@ class BaseCommand(object):
         return "\nUSAGE:\n%s\nDESCRIPTION:\n%s\n" % (
             self.getUsage(), self.getDesc(), syntax)
 
+    def printSubCommands(self):
+        """
+
+        """
+        if hasattr(self, 'subcommands'):
+            self.subcommands.printSubCommands()
 
 class NullCommand(BaseCommand):
     """
@@ -132,7 +192,37 @@ class NullCommand(BaseCommand):
         pass
 
 
-class ShowSubCommands(object):
+class BaseSubCommand(object):
+    """
+    
+    """
+    def getLegalVerbs(self):
+        """
+        Get all the legal verbs for all the subcommands.
+        """
+        def isVerb(klass):
+            """
+            A member checker that ensures we get verb instances as created by
+            oneOfCaseless.
+            """
+            if isinstance(klass, MatchFirst):
+                return True
+            return False
+        klassData = inspect.getmembers(self, isVerb)
+        return [klass for klassName, klass in klassData]
+
+    def printSubCommands(self):
+        """
+
+        """
+        print
+        print "  Sub-commands:"
+        for verb in self.getLegalVerbs():
+            print "    %s" % verb.exprs[0].returnString
+        print
+
+
+class ShowSubCommands(BaseSubCommand):
     """
     The subcommands for the show command.
 
@@ -154,21 +244,6 @@ class ShowSubCommands(object):
     history = oneOfCaseless("history hist his")
     backend = oneOfCaseless("backend back")
     system = oneOfCaseless("system syst sys")
-
-    def getLegalVerbs(self):
-        """
-        Get all the legal verbs for all the subcommands.
-        """
-        def isVerb(klass):
-            """
-            A member checker that ensures we get verb instances as created by
-            oneOfCaseless.
-            """
-            if isinstance(klass, MatchFirst):
-                return True
-            return False
-        klassData = inspect.getmembers(self, isVerb)
-        return [klass for  klassName, klass in klassData]
 
 
 class ShowCommand(BaseCommand):
@@ -202,16 +277,6 @@ class ShowCommand(BaseCommand):
             print "\n%s\n" % self.parser.shell.getBackend()
         elif show in self.subcommands.system.exprs:
             print "\n%s\n" % self.parser.shell.getSystem().longName
-
-    def printSubCommands(self):
-        """
-
-        """
-        print
-        print "  Sub-commands:"
-        for verb in self.subcommands.getLegalVerbs():
-            print "    %s" % verb.exprs[0].returnString
-        print
 
     def printShortHelp(self):
         """

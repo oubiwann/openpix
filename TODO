@@ -1,9 +1,6 @@
 Thought Placeholders
 --------------------
- * DONE - Fill in the shell completion code to use the new command list builder to get
-   global commands.
- * Add support for subcommands
-
+ * Next up: help
  * command work priority:
     - usermode
         help
@@ -57,6 +54,9 @@ Thought Placeholders
  * DONE - per the TODO in commands.privmode.system:
     - WON'T FIX (not needed; the shell sets the system) do adaptation for system callers
     - WON'T FIX (not needed; the shell sets this up too) do something similar for backends
+ * DONE - Fill in the shell completion code to use the new command list builder to get
+   global commands.
+ * DONE - Add support for subcommands
 
 Startup
 -------

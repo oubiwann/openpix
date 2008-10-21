@@ -1,3 +1,15 @@
+2008.10.21
+
+* Fixed typo in method name.
+* Created a base subcommand class.
+* Split up get* and is* functions in commands.base for reusability.
+* Fixed some white space issues.
+* Added more convenience methods to Completer.
+* Reorganized code in commands.base.
+* Changed the commands cached in Completer from lists of strings to lists of
+objects.
+* Added a compare function to BaseCommand so that commands would sort properly.
+
 2008.10.20
 
 * Moved getGrammar into common.

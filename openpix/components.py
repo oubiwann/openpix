@@ -6,6 +6,7 @@ from openpix.grammar.privmode import main as privmode
 
 registry = Components("openpix")
 
+
 def register():
     """
 

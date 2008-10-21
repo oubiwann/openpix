@@ -6,7 +6,7 @@ from openpix import components
 from openpix.system import backend
 from openpix.system import call as system
 from openpix.grammar.parser import Parser
-from openpix.commands.base import getCommandClasses
+from openpix.commands.base import getCommandClasses, getClassesWithSubcommands
 
 
 class Completer(object):
@@ -17,50 +17,87 @@ class Completer(object):
         self.shell = shell
         self.commands = []
         self.matches = []
-        self.ignore = set(['shorthelp'])
+        self.ignore = ['shorthelp']
+
+    def getCommands(self):
+        """
+
+        """
+        if self.commands:
+            return self.commands
+        commandData  = getCommandClasses(self.shell.mode)
+        commands = [klass(self.shell.parser)
+                    for name, klass in commandData]
+        commands.sort()
+        self.commands = [x for x in commands
+                         if x.getCommandName() not in self.ignore]
+        return self.commands
 
     def getCommandNames(self):
         """
 
         """
-        commandData  = getCommandClasses(self.shell.mode)
-        if self.commands:
-            return self.commands
-        commands = [klass(self.shell.parser).getCommandName() for name, klass
-                    in commandData]
-        self.commands = sorted(list(
-            self.ignore.symmetric_difference(commands)))
-        return self.commands
+        return [x.getCommandName() for x in self.getCommands()]
+
+    def getCommandNamesWithSubCommands(self):
+        """
+
+        """
+        return [x.getCommandName() for x in self.getCommands()
+                if hasattr(x, 'subcommands')]
+
+    def getCommand(self, name):
+        for command in self.getCommands():
+            if command.getCommandName() == name:
+                return command
 
     def getGlobalMatches(self, text):
         """
 
         """
         matches = []
-        for command in self.getCommandNames():
-            if command[:len(text)] == text:
-                matches.append(command)
+        for commandName in self.getCommandNames():
+            if commandName[:len(text)] == text:
+                matches.append(commandName)
         return matches
 
-    def getSubcommadMatches(self, text):
+    def getSubCommandMatches(self, commandName, text):
         """
 
         """
+        matches = []
+        subCommandNames = []
+        command = self.getCommand(commandName)
+        for subCommandVerb in [x[0] for x in command.subcommands.getLegalVerbs()]:
+            subCommandName = subCommandVerb.returnString
+            if subCommandName[:len(text)] == text:
+                matches.append(subCommandName)
+        return matches
+
+    def tryComplete(self, data, error=IndexError):
+        try:
+            return data
+        except error:
+            return None
 
     def complete(self, text, state):
         """
         Return the next possible completion for 'text'.
         """
+        buffer = readline.get_line_buffer()
+        subCheck = buffer.split(" ")
         if state == 0:
-            if " " in text:
-                self.matches = self.getSubcommandMatches(text)
+            if len(subCheck) > 1:
+                commandName = subCheck[0]
+                subCommandName = subCheck[1]
+                if commandName in self.getCommandNamesWithSubCommands():
+                    self.matches = self.getSubCommandMatches(commandName, text)
             else:
                 self.matches = self.getGlobalMatches(text)
         try:
             return self.matches[state]
         except IndexError:
             return None
-
 
 
 class User(object):
@@ -195,6 +232,7 @@ class Shell(object):
         self.setUpCompletion()
         # create parser
         self.parser = Parser(self)
+        #import pdb;pdb.set_trace()
 
     def run(self):
         while not self.user.logout:
