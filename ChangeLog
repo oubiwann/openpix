@@ -9,6 +9,7 @@
 * Changed the commands cached in Completer from lists of strings to lists of
 objects.
 * Added a compare function to BaseCommand so that commands would sort properly.
+* Removed commented-out debug trace.
 
 2008.10.20
 

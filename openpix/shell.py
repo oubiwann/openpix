@@ -232,7 +232,6 @@ class Shell(object):
         self.setUpCompletion()
         # create parser
         self.parser = Parser(self)
-        #import pdb;pdb.set_trace()
 
     def run(self):
         while not self.user.logout:
