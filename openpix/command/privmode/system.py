@@ -1,6 +1,6 @@
 from zope.interface import implements
 
-from openpix.commands import base
+from openpix.command import base
 from openpix.util import oneOfCaseless
 from openpix.interfaces import IPrivCommand
 
@@ -15,7 +15,7 @@ class InterfaceCommand(base.BaseCommand):
     skipHelp = False
     legalVerbs = oneOfCaseless("interface interf inter int i")
 
-    def _doCommand(self, user):
+    def doCommand(self, user):
         print self.system.getInterface()
 
 
@@ -29,7 +29,7 @@ class QuitCommand(base.BaseCommand):
     skipHelp = False
     legalVerbs = oneOfCaseless("quit q exit ex logout logou logo")
 
-    def _doCommand(self, user):
+    def doCommand(self, user):
         print "\nLogoff\n"
 
 

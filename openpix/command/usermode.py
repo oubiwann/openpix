@@ -1,7 +1,7 @@
 from zope.interface import implements
 
 from openpix import util
-from openpix.commands import base
+from openpix.command import base
 from openpix.util import oneOfCaseless
 from openpix.interfaces import IUserCommand
 
@@ -16,7 +16,7 @@ class EnableCommand(base.BaseCommand):
     skipHelp = False
     legalVerbs = oneOfCaseless("enable enab en")
 
-    def _doCommand(self, user):
+    def doCommand(self, user):
         # XXX add support for changing the password
         pass
 
@@ -31,7 +31,7 @@ class LoginCommand(base.BaseCommand):
     skipHelp = False
     legalVerbs = oneOfCaseless("login logi")
 
-    def _doCommand(self, user):
+    def doCommand(self, user):
         print "not implemented"
 
 
@@ -45,7 +45,7 @@ class QuitCommand(base.BaseCommand):
     skipHelp = False
     legalVerbs = oneOfCaseless("quit q exit ex logout logou logo")
 
-    def _doCommand(self, user):
+    def doCommand(self, user):
         print "\nLogoff\n"
         user.logout = True
 

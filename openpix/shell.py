@@ -6,7 +6,7 @@ from openpix import components
 from openpix.system import backend
 from openpix.system import call as system
 from openpix.grammar.parser import Parser
-from openpix.commands.base import getCommandClasses, getClassesWithSubcommands
+from openpix.command.base import getCommandClasses, getClassesWithSubcommands
 
 
 class Completer(object):
@@ -48,12 +48,6 @@ class Completer(object):
                 matches.append(subCommandName)
         return matches
 
-    def tryComplete(self, data, error=IndexError):
-        try:
-            return data
-        except error:
-            return None
-
     def complete(self, text, state):
         """
         Return the next possible completion for 'text'.
@@ -69,11 +63,14 @@ class Completer(object):
             if len(subCheck) > 1:
                 commandName = subCheck[0]
                 subCommandName = subCheck[1]
+                # completer for help
                 if commandName == "help":
                     self.matches = self.getGlobalMatches(text)
+                # completer for subcommands
                 elif commandName in self.shell.getCommandNamesWithSubCommands():
                     self.matches = self.getSubCommandMatches(commandName, text)
             else:
+                # general completer
                 self.matches = self.getGlobalMatches(text)
         try:
             return self.matches[state]

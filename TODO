@@ -1,16 +1,20 @@
+Bugs
+----
+ * in privmode, the command list built from the completer shows the enable
+   command, and it sholdn't
+
 Thought Placeholders
 --------------------
  * Finish with show subcommands
- * Add completer for 'help' command
  * Revamp commands
-    - renmae to "command"
+    - DONE - renmae to "command"
     - move common commands out of base and into common
     - don't stomp on other modules named "common"
         . in commands.__init__, from common import *
         . in othe modules, from openpix import command, command.CommandName
         . make similar changes for openpix.grammar.common:
             from openpix import grammar, grammar.GrammarName
-    - rename _doCommand to doCommand
+    - DONE - rename _doCommand to doCommand
 
  * command work priority:
     - usermode

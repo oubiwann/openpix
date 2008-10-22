@@ -22,6 +22,9 @@ speficially, the help command).
 changing them to parser.getShell().
 * Added support for the help command.
 * Added support for auto-completion with help.
+* Removed unneeded method from Completer.
+* Renamed openpix.commands to openpix.command.
+* Renamed all occurances of _doCommand to doCommand.
 
 2008.10.20
 

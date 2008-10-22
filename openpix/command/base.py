@@ -47,13 +47,13 @@ def getClasses(data, mode=None, filter=isCommandClass):
     the 'filter' parameter is used to get only command classes or only
     sub-command classes, etc.
     """
-    from openpix import commands
+    from openpix import command
 
     classes = data.get(mode)
     if mode and classes:
         return classes
-    modules = getModules(commands)
-    modules.extend(getModules(commands.privmode))
+    modules = getModules(command)
+    modules.extend(getModules(command.privmode))
     commands = []
     for module in modules:
         commands.extend(
@@ -106,7 +106,7 @@ class BaseCommand(object):
         self.tokens = tokens
 
     def __call__(self, user):
-        self._doCommand(user)
+        self.doCommand(user)
 
     def __cmp___(self, other):
         """
@@ -119,7 +119,7 @@ class BaseCommand(object):
             return 0
         return -1
 
-    def _doCommand(self, user):
+    def doCommand(self, user):
         """
         This method provides the action for each command.
 
@@ -189,7 +189,7 @@ class NullCommand(BaseCommand):
     skipHelp = True
     legalVerbs = oneOfCaseless(" ")
 
-    def _doCommand(self, user):
+    def doCommand(self, user):
         pass
 
 
@@ -258,7 +258,7 @@ class ShowCommand(BaseCommand):
     legalVerbs = oneOfCaseless("show sho sh")
     subcommands = ShowSubCommands()
 
-    def _doCommand(self, user):
+    def doCommand(self, user):
         show = self.tokens.show
         if not show:
             self.printSubCommands()
@@ -304,7 +304,7 @@ class ShortHelpCommand(BaseHelpCommand):
     helpTextMethod = "getSummary"
     legalVerbs = oneOfCaseless("?")
 
-    def _doCommand(self, user):
+    def doCommand(self, user):
         print
         for klassName, klass in sorted(getCommandClasses(self.mode)):
             if klass.skipHelp:
@@ -325,7 +325,7 @@ class HelpCommand(BaseCommand):
     helpTextMethod = "getDesc"
     legalVerbs = oneOfCaseless("help h")
 
-    def _doCommand(self, user):
+    def doCommand(self, user):
         helpSubCommand = self.tokens.subCommand
         print self.shell.getCommand(helpSubCommand).getHelp()
 
@@ -361,7 +361,7 @@ class PingCommand(BaseCommand):
     skipHelp = False
     legalVerbs = oneOfCaseless("ping pi")
 
-    def _doCommand(self, user):
+    def doCommand(self, user):
         print "not implemented"
 
 
@@ -389,5 +389,5 @@ class TracerouteCommand(BaseCommand):
     skipHelp = False
     legalVerbs = oneOfCaseless("traceroute tracert trace trac tra tr")
 
-    def _doCommand(self, user):
+    def doCommand(self, user):
         print "not implemented"

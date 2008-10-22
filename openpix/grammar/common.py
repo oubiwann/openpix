@@ -5,8 +5,8 @@ from pyparsing import Optional, empty, oneOf
 from openpix import interfaces
 # XXX the following imported code needs to be moved from usermode into either
 # commands.base or commands.common and then imported from there
-from openpix.commands import base
-from openpix.commands import usermode
+from openpix.command import base
+from openpix.command import usermode
 
 shortHelpOption = Optional(
     base.ShortHelpCommand.legalVerbs).setResultsName('shortHelp')
@@ -30,7 +30,7 @@ class Grammar(object):
     def makeCommandParseAction(self, klass):
         """
         A decorator that instantiates the command class that is ultimately
-        responsible for carrying out the command execution (klass._doCommand).
+        responsible for carrying out the command execution (klass.doCommand).
         """
         def commandParseAction(string, location, tokens):
             return klass(self.parser, tokens=tokens)

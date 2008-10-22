@@ -4,8 +4,8 @@ from pyparsing import Optional, Or, LineEnd
 
 from openpix import interfaces
 from openpix.grammar import common
-from openpix.commands import base
-from openpix.commands.privmode import system
+from openpix.command import base
+from openpix.command.privmode import system
 
 
 shortHelpOption = common.shortHelpOption
