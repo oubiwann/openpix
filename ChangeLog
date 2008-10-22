@@ -25,6 +25,9 @@ changing them to parser.getShell().
 * Removed unneeded method from Completer.
 * Renamed openpix.commands to openpix.command.
 * Renamed all occurances of _doCommand to doCommand.
+* Moved common commands into new common module and out of base.
+* Moved subcommands into new subcommand module and out of base.
+* Added more common commands to privmode.
 
 2008.10.20
 

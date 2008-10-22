@@ -2,14 +2,12 @@ from zope.interface import implements
 
 from pyparsing import Optional, empty, oneOf
 
+from openpix import command
 from openpix import interfaces
-# XXX the following imported code needs to be moved from usermode into either
-# commands.base or commands.common and then imported from there
-from openpix.command import base
-from openpix.command import usermode
+
 
 shortHelpOption = Optional(
-    base.ShortHelpCommand.legalVerbs).setResultsName('shortHelp')
+    command.ShortHelpCommand.legalVerbs).setResultsName('shortHelp')
 nullCommand = Optional(empty)
 
 
@@ -48,7 +46,7 @@ class Grammar(object):
         self.allCommandNames = oneOf(
             self.shell.getCommandNames()).setResultsName("subCommand")
         self.helpCommand = (
-            base.HelpCommand.legalVerbs +
+            command.HelpCommand.legalVerbs +
             self.allCommandNames +
             shortHelpOption)
 

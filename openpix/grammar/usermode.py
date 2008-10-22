@@ -4,8 +4,9 @@ from pyparsing import Optional, Or, LineEnd
 
 from openpix import interfaces
 from openpix.grammar import common
-from openpix.command import base
+from openpix import command
 from openpix.command import usermode
+from openpix.command import subcommand
 
 
 shortHelpOption = common.shortHelpOption
@@ -33,37 +34,37 @@ class UserModeGrammar(common.Grammar):
         quitCommand = usermode.QuitCommand.legalVerbs + shortHelpOption
 
         showOptions = Optional(
-            Or(base.ShowSubCommands().getLegalVerbs())
+            Or(subcommand.ShowSubCommands().getLegalVerbs())
             ).setResultsName('show')
         showCommand = (
-            base.ShowCommand.legalVerbs + showOptions + shortHelpOption)
+            command.ShowCommand.legalVerbs + showOptions + shortHelpOption)
 
         shortHelpCommand = (
-            base.ShortHelpCommand.legalVerbs + shortHelpOption)
+            command.ShortHelpCommand.legalVerbs + shortHelpOption)
 
-        pingCommand = base.PingCommand.legalVerbs + shortHelpOption
+        pingCommand = command.PingCommand.legalVerbs + shortHelpOption
         tracerouteCommand = (
-            base.TracerouteCommand.legalVerbs + shortHelpOption)
+            command.TracerouteCommand.legalVerbs + shortHelpOption)
 
         # set the parse action
         nullCommand.setParseAction(
-            self.makeCommandParseAction(base.NullCommand))
+            self.makeCommandParseAction(command.NullCommand))
         quitCommand.setParseAction(
             self.makeCommandParseAction(usermode.QuitCommand))
         self.helpCommand.setParseAction(
-            self.makeCommandParseAction(base.HelpCommand))
+            self.makeCommandParseAction(command.HelpCommand))
         shortHelpCommand.setParseAction(
-            self.makeCommandParseAction(base.ShortHelpCommand))
+            self.makeCommandParseAction(command.ShortHelpCommand))
         enableCommand.setParseAction(
             self.makeCommandParseAction(usermode.EnableCommand))
         pingCommand.setParseAction(
-            self.makeCommandParseAction(base.PingCommand))
+            self.makeCommandParseAction(command.PingCommand))
         loginCommand.setParseAction(
             self.makeCommandParseAction(usermode.LoginCommand))
         showCommand.setParseAction(
-            self.makeCommandParseAction(base.ShowCommand))
+            self.makeCommandParseAction(command.ShowCommand))
         tracerouteCommand.setParseAction(
-            self.makeCommandParseAction(base.TracerouteCommand))
+            self.makeCommandParseAction(command.TracerouteCommand))
 
         # set the complete grammar
         self.grammar = Or([

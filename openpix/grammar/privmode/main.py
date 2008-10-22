@@ -4,13 +4,14 @@ from pyparsing import Optional, Or, LineEnd
 
 from openpix import interfaces
 from openpix.grammar import common
-from openpix.command import base
+from openpix import command
+from openpix.command import subcommand
 from openpix.command.privmode import system
 
 
 shortHelpOption = common.shortHelpOption
 
-# define common command grammars
+# define common, non-class command grammars
 nullCommand = common.nullCommand
 
 class PrivModeGrammar(common.Grammar):
@@ -24,26 +25,55 @@ class PrivModeGrammar(common.Grammar):
         """
 
         """
-        # define the commdands' grammars
-        interfaceCommand = (
-            system.InterfaceCommand.legalVerbs + shortHelpOption)
+        # define the common grammars
         quitCommand = (
             system.QuitCommand.legalVerbs + shortHelpOption
             ).setResultsName("exit")
 
-        # set the parse action for the common grammars
-        nullCommand.setParseAction(
-            self.makeCommandParseAction(base.NullCommand))
+        showOptions = Optional(
+            Or(subcommand.ShowSubCommands().getLegalVerbs())
+            ).setResultsName('show')
+        showCommand = (
+            command.ShowCommand.legalVerbs + showOptions + shortHelpOption)
 
-        # set the parse action
-        interfaceCommand.setParseAction(
-            self.makeCommandParseAction(system.InterfaceCommand))
+        shortHelpCommand = (
+            command.ShortHelpCommand.legalVerbs + shortHelpOption)
+
+        pingCommand = command.PingCommand.legalVerbs + shortHelpOption
+        tracerouteCommand = (
+            command.TracerouteCommand.legalVerbs + shortHelpOption)
+
+        nullCommand.setParseAction(
+            self.makeCommandParseAction(command.NullCommand))
+
+        # privmode grammar: system
+        interfaceCommand = (
+            system.InterfaceCommand.legalVerbs + shortHelpOption)
+
+        # set the common parse actions
         quitCommand.setParseAction(
             self.makeCommandParseAction(system.QuitCommand))
+        showCommand.setParseAction(
+            self.makeCommandParseAction(command.ShowCommand))
+        shortHelpCommand.setParseAction(
+            self.makeCommandParseAction(command.ShortHelpCommand))
+
+        self.helpCommand.setParseAction(
+            self.makeCommandParseAction(command.HelpCommand))
+
+        pingCommand.setParseAction(
+            self.makeCommandParseAction(command.PingCommand))
+        tracerouteCommand.setParseAction(
+            self.makeCommandParseAction(command.TracerouteCommand))
+
+        # privmode parse action: system
+        interfaceCommand.setParseAction(
+            self.makeCommandParseAction(system.InterfaceCommand))
 
         # set the complete grammar
         self.grammar = Or([
-            nullCommand, quitCommand, interfaceCommand
+            nullCommand, quitCommand, interfaceCommand, showCommand,
+            self.helpCommand, shortHelpCommand, pingCommand, tracerouteCommand,
         ]).setResultsName("command") + LineEnd()
 
 
