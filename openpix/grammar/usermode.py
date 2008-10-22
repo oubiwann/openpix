@@ -12,7 +12,6 @@ shortHelpOption = common.shortHelpOption
 
 # define common command grammars
 nullCommand = common.nullCommand
-helpCommand = common.helpCommand
 
 class UserModeGrammar(common.Grammar):
     """
@@ -21,12 +20,6 @@ class UserModeGrammar(common.Grammar):
     appliance.
     """
     component.adapts(interfaces.IParser, interfaces.IUserMode)
-
-    def __init__(self, parser, mode):
-        self.parser = parser
-        self.mode = mode
-        self.grammar = None
-        self.buildGrammar()
 
     def buildGrammar(self):
         """
@@ -57,7 +50,7 @@ class UserModeGrammar(common.Grammar):
             self.makeCommandParseAction(base.NullCommand))
         quitCommand.setParseAction(
             self.makeCommandParseAction(usermode.QuitCommand))
-        helpCommand.setParseAction(
+        self.helpCommand.setParseAction(
             self.makeCommandParseAction(base.HelpCommand))
         shortHelpCommand.setParseAction(
             self.makeCommandParseAction(base.ShortHelpCommand))
@@ -74,7 +67,7 @@ class UserModeGrammar(common.Grammar):
 
         # set the complete grammar
         self.grammar = Or([
-            nullCommand, enableCommand, shortHelpCommand, helpCommand,
+            nullCommand, enableCommand, shortHelpCommand, self.helpCommand,
             quitCommand, pingCommand, loginCommand, showCommand,
             tracerouteCommand
             ]).setResultsName("command") + LineEnd()

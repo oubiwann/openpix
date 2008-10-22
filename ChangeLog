@@ -17,6 +17,10 @@ objects.
 getCommand* methods are generally useful to other parts of the application,
 speficially, the help command).
 * Cleaned up the complete method.
+* Removed unnecessary __init__ from Grammar subclasses.
+* Added shell getter to parser and cleaned up references to parser.shell,
+changing them to parser.getShell().
+* Added support for the help command.
 
 2008.10.20
 

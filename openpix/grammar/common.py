@@ -1,6 +1,6 @@
 from zope.interface import implements
 
-from pyparsing import Optional, empty
+from pyparsing import Optional, empty, oneOf
 
 from openpix import interfaces
 # XXX the following imported code needs to be moved from usermode into either
@@ -8,13 +8,9 @@ from openpix import interfaces
 from openpix.commands import base
 from openpix.commands import usermode
 
-# XXX
-allCommands = empty
 shortHelpOption = Optional(
     base.ShortHelpCommand.legalVerbs).setResultsName('shortHelp')
 nullCommand = Optional(empty)
-helpCommand = (base.HelpCommand.legalVerbs + Optional(allCommands) +
-               shortHelpOption)
 
 
 class Grammar(object):
@@ -25,8 +21,11 @@ class Grammar(object):
 
     def __init__(self, parser, mode):
         self.parser = parser
+        self.shell = parser.getShell()
         self.mode = mode
         self.grammar = None
+        self.buildHelpers()
+        self.buildGrammar()
 
     def makeCommandParseAction(self, klass):
         """
@@ -37,6 +36,27 @@ class Grammar(object):
             return klass(self.parser, tokens=tokens)
         return commandParseAction
 
+    def buildHelpers(self):
+        """
+        This method sets up helper grammars that are useful to more than one
+        subclass but depend upon the grammar class or one or more of its
+        attribtues in order to be created.
+        """
+        # note that allCommandNames is intended to be used with help, in the
+        # second position; this is the position of "subcommand", thus the
+        # result name
+        self.allCommandNames = oneOf(
+            self.shell.getCommandNames()).setResultsName("subCommand")
+        self.helpCommand = (
+            base.HelpCommand.legalVerbs +
+            self.allCommandNames +
+            shortHelpOption)
+
+    def buildGrammar(self):
+        """
+
+        """
+        raise NotImplementedError
 
     def getGrammar(self):
         """

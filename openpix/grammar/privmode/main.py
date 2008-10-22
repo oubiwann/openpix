@@ -20,11 +20,6 @@ class PrivModeGrammar(common.Grammar):
     """
     component.adapts(interfaces.IParser, interfaces.IPrivMode)
 
-    def __init__(self, parser, mode):
-        self.parser = parser
-        self.mode = mode
-        self.buildGrammar()
-
     def buildGrammar(self):
         """
 

@@ -100,8 +100,9 @@ class BaseCommand(object):
 
     def __init__(self, parser, tokens=[]):
         self.parser = parser
-        self.system = self.parser.shell.getSystem()
-        self.mode = self.parser.shell.getMode()
+        self.shell = self.parser.getShell()
+        self.system = self.shell.getSystem()
+        self.mode = self.shell.getMode()
         self.tokens = tokens
 
     def __call__(self, user):
@@ -166,10 +167,10 @@ class BaseCommand(object):
         """
 
         """
-        syntax = self.getSyntax()
+        syntax = self.getSyntax() or ""
         if syntax:
-            syntax = "SYNTAX:\n%s" % syntax
-        return "\nUSAGE:\n%s\nDESCRIPTION:\n%s\n" % (
+            syntax = "SYNTAX:\n\n\t%s\n" % syntax
+        return "\nUSAGE:\n\n\t%s\n\nDESCRIPTION:\n\n\t%s\n\n%s" % (
             self.getUsage(), self.getDesc(), syntax)
 
     def printSubCommands(self):
@@ -325,7 +326,8 @@ class HelpCommand(BaseCommand):
     legalVerbs = oneOfCaseless("help h")
 
     def _doCommand(self, user):
-        print self.getHelp()
+        helpSubCommand = self.tokens.subCommand
+        print self.shell.getCommand(helpSubCommand).getHelp()
 
 
 class PingCommand(BaseCommand):

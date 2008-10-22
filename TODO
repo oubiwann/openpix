@@ -11,6 +11,7 @@ Thought Placeholders
         . in othe modules, from openpix import command, command.CommandName
         . make similar changes for openpix.grammar.common:
             from openpix import grammar, grammar.GrammarName
+    - rename _doCommand to doCommand
 
  * command work priority:
     - usermode

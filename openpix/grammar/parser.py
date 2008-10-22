@@ -21,6 +21,12 @@ class Parser(object):
         self.shell = shell
         self._grammar_cache = {}
 
+    def getShell(self):
+        """
+
+        """
+        return self.shell
+
     def getGrammar(self, mode):
         """
         A grammar caching mechanism that uses the factory only when neccessary.
