@@ -1,1 +1,1 @@
-from common import *
+from openpix.command.common import *

@@ -3,18 +3,19 @@ from zope import component
 from pyparsing import Optional, Or, LineEnd
 
 from openpix import interfaces
-from openpix.grammar import common
+from openpix import grammar
+from openpix.grammar import base
 from openpix import command
 from openpix.command import subcommand
 from openpix.command.privmode import system
 
 
-shortHelpOption = common.shortHelpOption
+shortHelpOption = grammar.shortHelpOption
 
 # define common, non-class command grammars
-nullCommand = common.nullCommand
+nullCommand = grammar.nullCommand
 
-class PrivModeGrammar(common.Grammar):
+class PrivModeGrammar(base.Grammar):
     """
     Priv EXEC mode lets you see all appliance settings as well as enter
     into configuration mode where these settings may be changed.

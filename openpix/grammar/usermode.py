@@ -3,18 +3,19 @@ from zope import component
 from pyparsing import Optional, Or, LineEnd
 
 from openpix import interfaces
-from openpix.grammar import common
+from openpix import grammar
+from openpix.grammar import base
 from openpix import command
 from openpix.command import usermode
 from openpix.command import subcommand
 
 
-shortHelpOption = common.shortHelpOption
+shortHelpOption = grammar.shortHelpOption
 
 # define common command grammars
-nullCommand = common.nullCommand
+nullCommand = grammar.nullCommand
 
-class UserModeGrammar(common.Grammar):
+class UserModeGrammar(base.Grammar):
     """
     User EXEC mode lets you see minimum security appliance settings. The
     user EXEC mode prompt appears when you first access the security

@@ -28,6 +28,7 @@ changing them to parser.getShell().
 * Moved common commands into new common module and out of base.
 * Moved subcommands into new subcommand module and out of base.
 * Added more common commands to privmode.
+* Moved Grammar out of common and into new base module.
 
 2008.10.20
 
