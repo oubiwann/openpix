@@ -1,6 +1,5 @@
 Thought Placeholders
 --------------------
- * Next up: help
  * Finish with show subcommands
  * Add completer for 'help' command
  * Revamp commands
@@ -15,7 +14,6 @@ Thought Placeholders
 
  * command work priority:
     - usermode
-        help
         IN PROGRESS - enable [password]
         show flash
     - execmode

@@ -69,7 +69,9 @@ class Completer(object):
             if len(subCheck) > 1:
                 commandName = subCheck[0]
                 subCommandName = subCheck[1]
-                if commandName in self.shell.getCommandNamesWithSubCommands():
+                if commandName == "help":
+                    self.matches = self.getGlobalMatches(text)
+                elif commandName in self.shell.getCommandNamesWithSubCommands():
                     self.matches = self.getSubCommandMatches(commandName, text)
             else:
                 self.matches = self.getGlobalMatches(text)

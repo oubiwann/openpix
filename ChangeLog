@@ -21,6 +21,7 @@ speficially, the help command).
 * Added shell getter to parser and cleaned up references to parser.shell,
 changing them to parser.getShell().
 * Added support for the help command.
+* Added support for auto-completion with help.
 
 2008.10.20
 
