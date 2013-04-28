@@ -1,7 +1,7 @@
 ~~~~~~~
 OpenPIX
 ~~~~~~~
-.. image:: resources/logos/carapace-4.png
+.. image:: resources/logos/openpix_logo_lg.png
    :align: right
 
 .. contents::
